@@ -1,0 +1,145 @@
+function ll --description 'List contents of directory using long format'
+    lsd --long --header --group-directories-first --blocks permission,user,group,size,date,name --date relative $argv
+end
+
+function lt --description 'List contents of directory in tree format'
+    lsd --tree --depth 2 --group-directories-first $argv
+end
+
+function la --description 'List all contents of directory using long format'
+    lsd --long --header --group-directories-first --blocks permission,user,group,size,date,name --date relative --all $argv
+end
+
+function lsize --description 'List contents sorted by size'
+    lsd --long --header --group-directories-first --blocks permission,size,date,name --date relative --sort size --reverse $argv
+end
+
+function lmod --description 'List contents sorted by modification date'
+    lsd --long --header --group-directories-first --blocks permission,size,date,name --date relative --sort date --reverse $argv
+end
+
+function lgit --description 'List contents with git status integration'
+    lsd --long --header --group-directories-first --blocks git,permission,size,date,name --date relative $argv
+end
+
+function ldev --description 'List contents focused on development files'
+    lsd --long --header --group-directories-first --blocks permission,size,date,git,name \
+        --date relative \
+        --ignore-glob .git,node_modules,target,build,dist \
+        $argv
+end
+
+function ldocker --description 'List contents focused on Docker files'
+    lsd --long --header --group-directories-first \
+        --blocks permission,size,date,name \
+        --date relative \
+        --ignore-glob "!(Dockerfile|docker-compose.*|.dockerignore)" \
+        $argv
+end
+
+function lcode --description 'List only code files'
+    # Find files with specific extensions and pipe to lsd
+    find . -type f \( \
+        -name "*.py" -o \
+        -name "*.js" -o \
+        -name "*.ts" -o \
+        -name "*.rb" -o \
+        -name "*.go" -o \
+        -name "*.rs" -o \
+        -name "*.cpp" -o \
+        -name "*.c" -o \
+        -name "*.h" -o \
+        -name "*.java" -o \
+        -name "*.kt" -o \
+        -name "*.cs" -o \
+        -name "*.php" \
+    \) -print0 | xargs -0 lsd --long --header \
+        --blocks permission,size,date,name \
+        --date relative
+end
+
+# Advanced git-aware listing
+function lgitmod --description 'List only git modified files'
+    if test -d .git
+        set -l modified_files (git status --porcelain | awk '{print $2}')
+        if test -n "$modified_files"
+            lsd --long --header --blocks git,permission,size,date,name --date relative $modified_files
+        else
+            echo "No modified files in git"
+        end
+    else
+        echo "Not a git repository"
+    end
+end
+
+# Project-specific listing
+function lproj --description 'List project-specific files based on detected project type'
+    set -l detected_type ""
+    
+    if test -f package.json
+        set detected_type "nodejs"
+    else if test -f Cargo.toml
+        set detected_type "rust"
+    else if test -f go.mod
+        set detected_type "golang"
+    else if test -f requirements.txt -o -f pyproject.toml
+        set detected_type "python"
+    end
+    
+    switch $detected_type
+        case "nodejs"
+            lsd --long --header --group-directories-first \
+                --blocks permission,size,date,name \
+                --ignore-glob "node_modules,dist,build,.next" \
+                $argv
+        case "rust"
+            lsd --long --header --group-directories-first \
+                --blocks permission,size,date,name \
+                --ignore-glob "target,Cargo.lock" \
+                $argv
+        case "golang"
+            lsd --long --header --group-directories-first \
+                --blocks permission,size,date,name \
+                --ignore-glob "vendor,go.sum" \
+                $argv
+        case "python"
+            lsd --long --header --group-directories-first \
+                --blocks permission,size,date,name \
+                --ignore-glob "__pycache__,*.pyc,venv,dist,build" \
+                $argv
+        case '*'
+            ll $argv
+    end
+end
+
+# Recent files listing
+function lrecent --description 'List recently modified files'
+    # Using find to get recent files and pipe to lsd
+    find . -type f -mtime -7 -print0 | xargs -0 lsd --long --header \
+        --blocks permission,size,date,name \
+        --date relative \
+        --sort time \
+        --reverse
+end
+
+# Size-focused listing with human-readable threshold
+function lbig --description 'List files larger than specified size (default 100MB)'
+    set -l size_threshold $argv[1]
+    test -z "$size_threshold"; and set size_threshold "100M"
+    
+    find . -type f -size +$size_threshold -exec lsd --long --header \
+        --blocks permission,size,date,name \
+        --date relative \
+        --sort size \
+        --reverse {} +
+end
+
+# Quick directory size summary
+function lsize-dirs --description 'List directories sorted by size'
+    du -h --max-depth=1 | sort -hr | while read -l size dir
+        lsd --long --header \
+            --blocks size,name \
+            --no-symlink \
+            $dir
+    end
+end

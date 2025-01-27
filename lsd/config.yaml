@@ -1,0 +1,32 @@
+classic: false
+blocks:
+  - permission
+  - user
+  - group
+  - size
+  - date
+  - name
+color:
+  when: auto
+  theme: custom
+date: relative
+dereference: false
+ignore-globs:
+  - .git
+  - node_modules
+icons:
+  when: auto
+  theme: fancy
+  separator: " "
+indicators: true
+layout: grid
+recursion:
+  enabled: false
+  depth: 2
+size: default
+sorting:
+  column: name
+  reverse: false
+  dir-grouping: first
+symlink-arrow: ⇒
+total-size: false

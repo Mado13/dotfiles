@@ -1,0 +1,9 @@
+{
+    "diagnostics.disable": [
+        "missing-fields"
+    ],
+    "diagnostics.globals": [
+        "vim",
+        "manually_installed_servers"
+    ]
+}
