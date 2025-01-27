@@ -1,21 +1,6 @@
 if status is-interactive
   # Aliases
   alias code="nvim"
-  alias restore_taxology='vmt restore --port 5432 --b2bucket "taxology-eu-db-backups" --b2encrypt "qG^w@~wST=sM2AI6Z.5VXz[9R5jQq:b9" --b2id "00349e35f357f0c000000000c" --b2key "K003BGiLNvSe9zYfScgQedNboZW3jBA"'
-  alias set_gcloud_taxology='gcloud config set project taxology-381314;
-    gcloud config set compute/zone europe-west1-b;
-    gcloud container clusters get-credentials taxology
-    gcloud components install kubectl'
-
-  alias set_gcloud_voormedia='gcloud config set project voormedia-187708;
-    gcloud config set compute/zone europe-west1-b;
-    gcloud container clusters get-credentials voormedia-2;
-    gcloud components install kubectl'
-
-  alias set_gcloud_tinify='gcloud config set project tinify-160715;
-    gcloud config set compute/zone europe-west1-b;
-    gcloud container clusters get-credentials tinify-2;
-    gcloud components install kubectl'
 
   # Google Cloud SDK path update
   if test -f /Users/Matan/google-cloud-sdk/path.fish.inc
@@ -34,13 +19,6 @@ if status is-interactive
   set -gx PATH /usr/local/opt/ruby/bin $PATH
   set -gx CPPFLAGS "-I"(brew --prefix readline)"/include" $CPPFLAGS
   set -gx LDFLAGS "-L"(brew --prefix readline)"/lib" $LDFLAGS
-  set -gx HF_TOKEN "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"
-  set -x B2_TAXOLOGY_ACCOUNT_ID "00349e35f357f0c000000000c"
-  set -x B2_TAXOLOGY_ACCOUNT_KEY "K003BGiLNvSe9zYfScgQedNboZW3jBA"
-  set -x B2_TAXOLOGY_ENCRYPTION_KEY "qG^w@~wST=sM2AI6Z.5VXz[9R5jQq:b9"
-  set -x B2_ACCOUNT_ID "0032a268ca5531e0000000028"
-  set -x B2_ACCOUNT_KEY "K003OcowLmlKFvnhNH07i/2zQ9M9yxo"
-  set -x B2_ENCRYPTION_KEY "fta%XXpfq._#}iEu5i_ZX%Jn5gIzs^WI"
   set -x PKG_CONFIG_PATH /opt/homebrew/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH
   set -x RUBY_CONFIGURE_OPTS "--with-openssl-dir=$(brew --prefix openssl@1.1)"
   set -gx PATH ~/.asdf/shims ~/.asdf/bin $PATH
