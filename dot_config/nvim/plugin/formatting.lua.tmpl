@@ -1,0 +1,54 @@
+vim.pack.add({
+	{ src = "https://github.com/stevearc/conform.nvim" },
+})
+
+-- one org lints-as-formats: eslint --fix under that tree, prettier elsewhere
+local lint_as_format = vim.fn.expand("~/code/{{ if hasKey . "work" }}{{ .work.dir }}{{ else }}__none__{{ end }}") .. "/"
+local function js_formatter(bufnr)
+	local path = vim.api.nvim_buf_get_name(bufnr)
+	if path ~= "" and vim.startswith(path, lint_as_format) then
+		return { "eslint_d" }
+	end
+	return { "prettier" }
+end
+
+require("conform").setup({
+	formatters_by_ft = {
+		lua = { "stylua" },
+		javascript = js_formatter,
+		typescript = { "prettierd" },
+		javascriptreact = { "prettierd" },
+		typescriptreact = { "prettierd" },
+		svelte = { "prettierd" },
+		css = { "prettierd" },
+		html = { "prettierd" },
+		json = { "prettierd" },
+		yaml = { "prettierd" },
+		markdown = { "prettierd", "injected" },
+	},
+	formatters = {
+		injected = { options = { ignore_errors = true } },
+	},
+	default_format_opts = {
+		lsp_format = "fallback",
+	},
+	format_on_save = function(bufnr)
+		if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+			return
+		end
+		return { timeout_ms = 1000, lsp_format = "fallback" }
+	end,
+})
+
+vim.api.nvim_create_user_command("FormatDisable", function(args)
+	if args.bang then
+		vim.b.disable_autoformat = true
+	else
+		vim.g.disable_autoformat = true
+	end
+end, { desc = "Disable format-on-save (! = buffer-only)", bang = true })
+
+vim.api.nvim_create_user_command("FormatEnable", function()
+	vim.b.disable_autoformat = false
+	vim.g.disable_autoformat = false
+end, { desc = "Re-enable format-on-save" })

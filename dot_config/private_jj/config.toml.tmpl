@@ -1,0 +1,381 @@
+"$schema" = "https://jj-vcs.github.io/jj/latest/config-schema.json"
+
+# ──────────────────────────────────────────────────────────────
+# IDENTITY
+# ──────────────────────────────────────────────────────────────
+
+[user]
+name  = "Matan"
+email = "matan.amidor@proton.me"
+
+# Work repos get the work address. --when.repositories matches by path
+# prefix, so anything under this directory picks it up.
+[[--scope]]
+--when.repositories = ["{{ .chezmoi.homeDir }}/code/{{ if hasKey . "work" }}{{ .work.dir }}{{ else }}__none__{{ end }}"]
+[--scope.user]
+email = "{{ if hasKey . "work" }}{{ .work.email }}{{ else }}{{ .email }}{{ end }}"
+
+# ──────────────────────────────────────────────────────────────
+# REMOTE SETTINGS
+#
+# auto-track-bookmarks only mirrors matching remote branches into
+# local bookmarks on fetch. Keep it at 'main': '*' mirrors every
+# branch on origin and leaves a pile of stale local bookmarks behind.
+#
+# Your own new bookmarks don't need tracking set up. `jj push -b <name>`
+# (or --named <name>=<rev>) tracks them for you on the first push.
+# ──────────────────────────────────────────────────────────────
+
+[remotes.origin]
+auto-track-bookmarks = 'main'
+
+# ──────────────────────────────────────────────────────────────
+# UI & EDITOR
+# ──────────────────────────────────────────────────────────────
+
+[ui]
+editor         = "{{ .chezmoi.homeDir }}/.config/jj/scripts/jj-editor.sh"
+diff-formatter = "difft"         # use difftastic for side-by-side diffs
+diff-editor    = ":builtin"      # interactive staging uses jj's own TUI
+merge-editor   = "vimdiff3"
+
+# Run `jj log` when you type `jj` with no arguments.
+default-command = "log"
+
+paginate                  = "auto"
+log-synthetic-elided-nodes = true   # shows "~ (elided)" lines in the graph
+graph.style               = "square"
+
+# "snapshot" conflict style: shows what each side looked like before
+# the conflict, rather than a diff of the changes. Easier to read
+# when both sides modified the same block heavily.
+conflict-marker-style = "snapshot"
+
+# ──────────────────────────────────────────────────────────────
+# COLOURS — Everforest, light soft. Matches ghostty's
+# "Everforest Light Soft" theme and nvim's sainnhe/everforest
+# (background=light, everforest_background=soft), so all three
+# render identically instead of jj falling back to whatever ANSI
+# palette a given terminal ships.
+# ──────────────────────────────────────────────────────────────
+
+[colors]
+"error" = { fg = "#5C6A72", bold = true }
+"error_source" = { fg = "#5C6A72" }
+"warning" = { fg = "#5C6A72", bold = true }
+"hint" = { fg = "#5C6A72" }
+"error heading" = { fg = "#F85552", bold = true }
+"error_source heading" = { bold = true }
+"warning heading" = { fg = "#DFA000", bold = true }
+"hint heading" = { fg = "#35A77C", bold = true }
+
+"conflict_description" = "#DFA000"
+"conflict_description difficult" = "#F85552"
+
+"commit_id" = "#3A94C5"
+"change_id" = "#DF69BA"
+
+"prefix" = { bold = true }
+"rest" = "#939F91"
+"change_offset" = { bold = true }
+"hidden prefix" = "#5C6A72"
+
+"author" = "#DFA000"
+"committer" = "#DFA000"
+"timestamp" = "#35A77C"
+"working_copies" = "#8DA101"
+"workspace_name" = "#8DA101"
+"bookmark" = "#DF69BA"
+"bookmarks" = "#DF69BA"
+"local_bookmarks" = "#DF69BA"
+"remote_bookmarks" = "#DF69BA"
+"tag" = "#DF69BA"
+"tags" = "#DF69BA"
+"git_ref" = "#8DA101"
+"divergent" = "#DF69BA"
+"mutable divergent" = "#F85552"
+"mutable divergent change_id" = "#F85552"
+"conflict" = "#F85552"
+"empty" = "#8DA101"
+"placeholder" = "#F85552"
+"description placeholder" = "#DFA000"
+"empty description placeholder" = "#8DA101"
+"separator" = "#939F91"
+"elided" = "#939F91"
+"root" = "#8DA101"
+
+"working_copy" = { bold = true }
+"working_copy commit_id" = "#3A94C5"
+"working_copy change_id" = "#DF69BA"
+"working_copy author" = "#DFA000"
+"working_copy committer" = "#DFA000"
+"working_copy timestamp" = "#35A77C"
+"working_copy working_copies" = "#8DA101"
+"working_copy bookmark" = "#DF69BA"
+"working_copy bookmarks" = "#DF69BA"
+"working_copy local_bookmarks" = "#DF69BA"
+"working_copy remote_bookmarks" = "#DF69BA"
+"working_copy tag" = "#DF69BA"
+"working_copy tags" = "#DF69BA"
+"working_copy git_ref" = "#8DA101"
+"working_copy divergent" = "#DF69BA"
+"working_copy mutable divergent" = "#F85552"
+"working_copy mutable divergent change_id" = "#F85552"
+"working_copy conflict" = "#F85552"
+"working_copy empty" = "#8DA101"
+"working_copy placeholder" = "#F85552"
+"working_copy description placeholder" = "#DFA000"
+"working_copy empty description placeholder" = "#8DA101"
+
+"config_list name" = "#8DA101"
+"config_list value" = "#DFA000"
+"config_list source" = "#3A94C5"
+"config_list path" = "#DF69BA"
+"config_list overridden" = "#939F91"
+"config_list overridden name" = "#939F91"
+"config_list overridden value" = "#939F91"
+"config_list overridden source" = "#939F91"
+"config_list overridden path" = "#939F91"
+
+"diff header" = "#DFA000"
+"diff empty" = "#35A77C"
+"diff binary" = "#35A77C"
+"diff file_header" = { bold = true }
+"diff hunk_header" = "#35A77C"
+"diff context line_number" = { dim = true }
+"diff removed" = { fg = "#F85552" }
+"diff added" = { fg = "#8DA101" }
+"diff token" = { underline = true }
+"diff modified" = "#35A77C"
+"diff untracked" = "#DF69BA"
+"diff renamed" = "#35A77C"
+"diff copied" = "#8DA101"
+"diff access-denied" = { bg = "#F85552" }
+
+"operation id" = "#3A94C5"
+"operation user" = "#DFA000"
+"operation time" = "#35A77C"
+"operation attributes" = "#DF69BA"
+"operation current_operation" = { bold = true }
+"operation current_operation id" = "#3A94C5"
+"operation current_operation user" = "#DFA000"
+"operation current_operation time" = "#35A77C"
+"operation current_operation attributes" = "#DF69BA"
+
+"node elided" = { fg = "#939F91" }
+"node working_copy" = { fg = "#8DA101", bold = true }
+"node current_operation" = { fg = "#8DA101", bold = true }
+"node immutable" = { fg = "#35A77C", bold = true }
+"node conflicted" = { fg = "#F85552", bold = true }
+
+"signature display" = "#DFA000"
+"signature key" = "#35A77C"
+"signature status good" = "#8DA101"
+"signature status unknown" = "#DFA000"
+"signature status bad" = "#F85552"
+"signature status invalid" = "#F85552"
+
+"arrange context commit" = { dim = true }
+
+# Diff token highlights (word-level changes within a line) — background
+# highlights instead of underlines, easier on the eyes.
+"diff removed token" = { fg = "#F85552", bg = "#FADBD0", underline = false }
+"diff added token"   = { fg = "#8DA101", bg = "#E5E6C5", underline = false }
+
+# ──────────────────────────────────────────────────────────────
+# DIFFTASTIC TOOL
+# ──────────────────────────────────────────────────────────────
+
+[merge-tools.difft]
+diff-args = ["--color=always", "$left", "$right"]
+
+# ──────────────────────────────────────────────────────────────
+# SNAPSHOT SETTINGS
+# ──────────────────────────────────────────────────────────────
+
+[snapshot]
+# If jj detects a workspace is stale (e.g. you pulled in another
+# terminal), it refreshes automatically instead of asking you to.
+auto-update-stale = true
+
+# Refuse to auto-track files larger than 50 MB (e.g. accidental
+# binary blobs). You'll get an error instead of a silent huge commit.
+max-new-file-size = "50MB"
+
+# ──────────────────────────────────────────────────────────────
+# WHAT COUNTS AS "IMMUTABLE" (i.e. don't rewrite this)
+#
+# Only trunk (main/master) is protected. Your own feature branch
+# commits — including already-pushed ones — stay freely rewritable.
+# This is intentional: the PR workflow requires amending and
+# force-pushing feature branches throughout the review cycle.
+# ──────────────────────────────────────────────────────────────
+
+[revset-aliases]
+'immutable_heads()' = 'builtin_immutable_heads()'
+
+# "me()" is every email I've ever committed under. Don't use the builtin
+# mine(), it only matches the current user.email, so stacks I authored
+# under one of the other addresses vanish from the log.
+{{- $es := list .email }}{{ if hasKey . "gitEmails" }}{{ $es = .gitEmails }}{{ end }}
+'me()' = '{{ range $i, $e := $es }}{{ if $i }} | {{ end }}author_email(exact:"{{ $e }}"){{ end }}'
+
+# "default()" is what `jj log` shows with no arguments.
+# Plain English: show trunk, plus every commit I authored that is
+# ahead of trunk and still visible (not abandoned/hidden).
+'default()' = '@ | @- | trunk() | (trunk()..(visible_heads() & me()))'
+
+# "recent()" means "committed within the last month".
+# Used by the lteam alias below.
+'recent()' = 'committer_date(after:"1 month ago")'
+
+# ──────────────────────────────────────────────────────────────
+# WHAT `jj log` SHOWS BY DEFAULT
+# ──────────────────────────────────────────────────────────────
+
+[revsets]
+log = "default()"
+
+# `jj tug`. The built-in advance walks back to the nearest bookmark on its
+# own, so there's no revset helper to maintain.
+bookmark-advance-to = "@-"
+
+# Hand out the shortest change-id prefixes to the stack I'm working on,
+# everything else can have the longer ones.
+short-prefixes = "(trunk()..@)::"
+
+# ──────────────────────────────────────────────────────────────
+# TEMPLATE ALIASES
+# ──────────────────────────────────────────────────────────────
+
+[template-aliases]
+# Show only the shortest unambiguous prefix of a change ID instead
+# of the full hash. Keeps the log output compact.
+'format_short_change_id(id)' = 'id.shortest()'
+
+# ──────────────────────────────────────────────────────────────
+# ALIASES
+# Plain English explanation beside each one.
+# ──────────────────────────────────────────────────────────────
+
+[aliases]
+
+# ── Navigation ────────────────────────────────────────────────
+
+# "new on trunk" — start a fresh commit branching off of main/master.
+nt = ["new", "trunk()"]
+
+# Move to the previous commit in history (walk backwards one step).
+# Use `jj prev 2` to go back two steps.
+# (built-in command, alias just documents it exists)
+
+# ── Viewing ───────────────────────────────────────────────────
+
+d   = ["diff"]                        # diff of current commit
+s   = ["show"]                        # description + diff of a commit
+la  = ["log", "-r", "all()"]          # every commit in the whole repo
+lm  = ["log", "-r", "mine()"]         # every commit I authored
+lt  = ["log", "-r", "trunk()..@ | trunk()"]   # trunk + my stack above it
+mine = ["log", "-r", "mine()"]        # same as lm (kept for muscle memory)
+br  = ["log", "-r", "trunk()..@"]    # just my commits above trunk
+
+# My current stack of in-progress work (visible heads I authored,
+# that haven't been merged into trunk yet).
+wip = ["log", "-r", "trunk()..(mine() & visible_heads())"]
+
+# Show commits from the whole team that appeared in the last month.
+# Useful for a quick "what's everyone been up to" view.
+lteam = ["log", "-r", "ancestors(visible_heads() & recent(), 2)"]
+
+# ── Editing ───────────────────────────────────────────────────
+
+c  = ["commit"]                       # finish this commit, start a new one
+ci = ["commit", "--interactive"]      # same but pick which changes to include
+si = ["squash", "--interactive"]      # interactively move hunks into the parent commit
+m  = ["describe", "-m"]              # set the commit message inline: `jj m "fix typo"`
+abs = ["absorb"]                      # auto-distribute uncommitted changes into the right prior commits
+evo = ["evolog"]                      # show the full edit history of a single commit
+
+# Squash current commit INTO its parent (fold up).
+# Same as plain `jj squash` but explicit — kept as a deliberate alias.
+# NOTE: consider just using `jj squash` directly.
+# a  = ["squash"]   ← removed: identical to the built-in default
+
+# ── Bookmarks (branches) ──────────────────────────────────────
+
+# Create a new bookmark pointing at the commit just before the
+# working copy (@-). You must pass the bookmark name:
+#   jj nb my-feature
+nb = ["bookmark", "create", "-r", "@-"]
+
+# The old `tug` alias is gone. Use `jj bookmark advance` (or `jj b a`),
+# which pulls the nearest bookmark up to revsets.bookmark-advance-to.
+
+# ── Remote sync ───────────────────────────────────────────────
+
+# Fetch all remote changes (equivalent to git fetch).
+pull = ["git", "fetch"]
+
+# Push current bookmark(s) to origin. For a bookmark origin hasn't seen
+# yet, pass -b <name>: that creates and tracks it. A bare push only moves
+# bookmarks that are already tracked.
+push = ["util", "exec", "--", "sh", "-c", """
+  output=$(jj git push "$@" 2>&1)
+  status=$?
+  echo "$output"
+  if [ "$status" -ne 0 ]; then exit "$status"; fi
+  case "$output" in *"Nothing changed"*) exit 0 ;; esac
+  nohup ~/.config/jj/scripts/ci-watch.sh >/dev/null 2>&1 &
+""", "jj-push"]
+
+# ── Rebasing ──────────────────────────────────────────────────
+
+# Move just the current commit on top of the latest trunk.
+retrunk = ["rebase", "-d", "trunk()"]
+
+# Move the ENTIRE current stack (all commits above trunk) on top
+# of the latest trunk in one go. More powerful than retrunk.
+reheat = ["rebase", "-d", "trunk()", "-s", "all:roots(trunk()..@)"]
+
+# Rebase every mutable commit in the whole repo onto trunk.
+# Useful after a big merge to clean up all in-flight work at once.
+rebase-all = ["rebase", "-s", "all:roots(trunk()..mutable())", "-d", "trunk()"]
+
+# ── Shell scripts (complex aliases) ───────────────────────────
+
+# Create a "fixup!" commit right after a target commit. The message
+# mirrors the target's first line so it's clear what it fixes.
+# `jj fixup` targets @ itself, so `jj edit <commit>` then `jj fixup`
+# is the normal flow. On a fresh empty working copy it targets @-.
+# Pass a revision to override: `jj fixup @--`.
+fixup = ["util", "exec", "--", "{{ .chezmoi.homeDir }}/.config/jj/scripts/jj-fixup.sh"]
+
+# Fold every "fixup!" commit back into the commit it names, the way
+# `git rebase --autosquash` does. Matching is by subject, so it doesn't
+# matter where @ is or whether a fixup drifted off its target. This is
+# the end of a review round: one fixup per comment, then squash the lot.
+# Defaults to every mutable commit; pass a revset to narrow it.
+squash-fixups = ["util", "exec", "--", "{{ .chezmoi.homeDir }}/.config/jj/scripts/jj-squash-fixups.sh"]
+sf = ["squash-fixups"]
+
+# Jump to a commit by searching its description.
+# Usage: `jj edesc "my feature"` — finds the commit whose message
+# contains that text and switches to it. Picks the first match if
+# multiple commits match.
+edesc = ["util", "exec", "--", "sh", "-c", """
+  id=$(jj log -r "all() & description(glob:\"*$1*\")" --no-graph -T 'change_id.shortest() ++ "\\n"' | head -1) && \
+  if [ -z "$id" ]; then echo "No commit matches: $1" >&2; exit 1; fi && \
+  jj edit "$id"
+""", "jj-edesc"]
+
+# Open a GitHub pull request for the current bookmark.
+# Finds the nearest bookmark between trunk and @, then calls `gh pr create`.
+# Fails loudly if there is no bookmark or if there are multiple (ambiguous).
+# Extra flags are passed through to `gh pr create` (e.g. --draft).
+pr = ["util", "exec", "--", "sh", "-c", """
+  bookmarks=$(jj log --no-graph -r 'heads(::@ & bookmarks() ~ trunk())' -T 'bookmarks.map(|b| b.name()).join("\\n")') && \
+  count=$(echo "$bookmarks" | grep -c .) && \
+  if [ "$count" -eq 0 ]; then echo "No bookmark found between trunk and @" >&2; exit 1; fi && \
+  if [ "$count" -gt 1 ]; then echo "Multiple bookmarks found, pass one explicitly:" >&2; echo "$bookmarks" >&2; exit 1; fi && \
+  gh pr create --head "$bookmarks" "$@"
+""", "jj-pr"]

@@ -1,0 +1,189 @@
+[
+  // ── Edit predictions ──────────────────────────────────────────
+  {
+    "context": "Editor && edit_prediction",
+    "bindings": {
+      "tab": "editor::AcceptEditPrediction",
+    },
+  },
+  {
+    "context": "Editor && (edit_prediction && (showing_completions || in_leading_whitespace))",
+    "bindings": {
+      "tab": "editor::AcceptEditPrediction",
+    },
+  },
+
+  // ── Vim special tab handling ───────────────────────────────────
+  {
+    "context": "vim_mode == literal",
+    "bindings": {
+      "tab": ["vim::Literal", ["tab", "\u0009"]],
+    },
+  },
+  {
+    "context": "(VimControl && !menu) || vim_mode == replace || vim_mode == waiting",
+    "bindings": {
+      "tab": "vim::Tab",
+    },
+  },
+
+  // ── Tab switcher ──────────────────────────────────────────────
+  {
+    "context": "TabSwitcher",
+    "bindings": {
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+      "ctrl-e": "menu::Cancel",
+    },
+  },
+
+  // ── Project panel ─────────────────────────────────────────────
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "space e": "workspace::ToggleLeftDock",
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+      "enter": ["workspace::SendKeystrokes", "enter space e"],
+    },
+  },
+
+  // ── Insert mode ───────────────────────────────────────────────
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      "ctrl-x ctrl-o": "editor::ShowCompletions",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert && showing_completions",
+    "bindings": {
+      "ctrl-e": "editor::Cancel",
+    },
+  },
+
+  // ── Completions menu ──────────────────────────────────────────
+  {
+    "context": "Editor && showing_completions",
+    "bindings": {
+      "ctrl-j": "editor::ContextMenuNext",
+      "ctrl-k": "editor::ContextMenuPrevious",
+    },
+  },
+
+  // ── Picker ────────────────────────────────────────────────────
+  {
+    "context": "Picker > Editor",
+    "bindings": {
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+      "ctrl-e": "menu::Cancel",
+    },
+  },
+
+  // ── Terminal ──────────────────────────────────────────────────
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-n": "workspace::NewTerminal",
+      "ctrl-shift-h": "pane::ActivatePreviousItem",
+      "ctrl-shift-l": "pane::ActivateNextItem",
+    },
+  },
+
+  // ── VimControl (normal + visual + operator pending) ───────────
+  {
+    "context": "VimControl",
+    "bindings": {
+      // ── Pane navigation ───────────────────────────────────────
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+
+      // ── File / search ─────────────────────────────────────────
+      "space e": "project_panel::ToggleFocus",
+      "space f f": "file_finder::Toggle",
+      "space f n": "workspace::NewFile",
+      "space f t": "terminal_panel::ToggleFocus",
+      "space /": "pane::DeploySearch",
+
+      // ── Search ────────────────────────────────────────────────
+      "space s w": "pane::DeploySearch",
+      "space s r": ["pane::DeploySearch", { "replace_enabled": true }],
+      "space s s": "outline::Toggle",
+      "space s S": "project_symbols::Toggle",
+
+      // ── Buffers / windows ─────────────────────────────────────
+      "space w d": "pane::CloseActiveItem",
+      "space w D": "pane::CloseAllItems",
+      "space b b": "pane::AlternateFile",
+      "space `": "pane::AlternateFile",
+      "space -": "pane::SplitDown",
+      "space |": "pane::SplitRight",
+      "space tab": "tab_switcher::Toggle",
+
+      // ── LSP / code actions ────────────────────────────────────
+      "space c d": "editor::Hover",
+      "space c f": "editor::Format",
+      "space c a": "editor::ToggleCodeActions",
+      "space c r": "editor::Rename",
+      "g r": "editor::FindAllReferences",
+      "g I": "editor::GoToImplementation",
+      "g y": "editor::GoToTypeDefinition",
+      "shift-k": "editor::Hover",
+      "[ e": "editor::GoToPreviousDiagnostic",
+      "] e": "editor::GoToDiagnostic",
+      "space x x": "diagnostics::Deploy",
+
+      // ── Git / jj ──────────────────────────────────────────────
+      "space g b": "editor::ToggleGitBlameInline",
+      "space g d": ["task::Spawn", { "task_name": "jj diff (file)" }],
+      "space g D": ["task::Spawn", { "task_name": "jj diff (project)" }],
+      "space g h": ["task::Spawn", { "task_name": "gh dash" }],
+      "space j j": ["task::Spawn", { "task_name": "jjui" }],
+      "space b r": ["task::Spawn", { "task_name": "jj branch log" }],
+
+      // ── Tasks ─────────────────────────────────────────────────
+      "space r c": ["task::Spawn", { "task_name": "Console" }],
+
+      // ── Clipboard helpers ─────────────────────────────────────
+      // Copy entire file content to system clipboard
+      "space y": ["workspace::SendKeystrokes", ": % y enter"],
+      // Replace entire file content with clipboard
+      "space p": ["workspace::SendKeystrokes", "g g V G p"],
+
+      // ── Multi-cursor / line movement ──────────────────────────
+      "alt-j": "editor::MoveLineDown",
+      "alt-k": "editor::MoveLineUp",
+      "cmd-alt-k": "editor::AddSelectionAbove",
+      "cmd-alt-j": "editor::AddSelectionBelow",
+
+      // ── Quit ──────────────────────────────────────────────────
+      "space q q": "zed::Quit",
+    },
+  },
+
+  // ── Normal mode only ──────────────────────────────────────────
+  {
+    "context": "vim_mode == normal",
+    "bindings": {
+      "s": "vim::PushSneak",
+      "shift-s": "vim::PushSneakBackward",
+      "shift-u": "editor::Redo",
+    },
+  },
+
+  // ── Visual mode only ──────────────────────────────────────────
+  {
+    "context": "vim_mode == visual",
+    "bindings": {
+      "shift-s": ["vim::PushAddSurrounds", {}],
+      "space c s": ["task::Spawn", { "task_name": "CodeSnap" }],
+    },
+  },
+]

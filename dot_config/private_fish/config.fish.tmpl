@@ -1,0 +1,64 @@
+# PATH and ruby live in conf.d/00-env.fish so non-interactive shells get them too.
+# only interactive niceties belong in here.
+
+if status is-interactive
+    set -g fish_greeting ""
+
+    # --- Environment ---
+    # literal prefix instead of `brew --prefix`, that was 6 subshells per startup
+    set -gx CLOUDSDK_PYTHON /opt/homebrew/bin/python3
+    set -gx CPPFLAGS "-I/opt/homebrew/opt/readline/include" $CPPFLAGS
+    set -gx LDFLAGS "-L/opt/homebrew/opt/readline/lib" $LDFLAGS
+    set -gx PKG_CONFIG_PATH /opt/homebrew/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH
+    set -gx BUNDLER_EDITOR nvim
+    set -gx CLAUDE_ENV_FILE "$HOME/.claude/env.sh"
+    set -gx DELTA_PAGER 'less -R'
+    set -gx LSCOLORS gxfxcxdxbxegedabagacad
+
+    # api keys and tokens, chmod 600, never in this file
+    test -f ~/.config/fish/secrets.fish; and source ~/.config/fish/secrets.fish
+
+    # --- SDKs ---
+    if test -f "$HOME/google-cloud-sdk/path.fish.inc"
+        source "$HOME/google-cloud-sdk/path.fish.inc"
+    end
+    if test -f "$HOME/google-cloud-sdk/completion.fish.inc"
+        source "$HOME/google-cloud-sdk/completion.fish.inc"
+    end
+
+    # --- Aliases & Functions ---
+    alias . "nvim ."
+    alias gs "git status"
+    alias gp "git pull --rebase; and git push"
+    alias octorus='command or'
+
+    function mkcd
+        mkdir -p $argv[1]; and cd $argv[1]
+    end
+
+    function ff
+        find . -type f | fzf --preview 'bat --style=numbers --color=always {}'
+    end
+
+    function ya
+        set tmp (mktemp -t "yazi-cwd.XXXXX")
+        yazi $argv --cwd-file="$tmp"
+        if set cwd (cat -- "$tmp"); and test -n "$cwd" -a "$cwd" != "$PWD"
+            cd -- "$cwd"
+        end
+        rm -f -- "$tmp"
+    end
+
+    # --- Keybindings ---
+    bind \cf ff
+    complete -c aws -f -a '(begin; set -lx COMP_SHELL fish; set -lx COMP_LINE (commandline); aws_completer; end)'
+
+    # --- Plugins (load last) ---
+    zoxide init fish | source
+    starship init fish | source
+    # ghostty is on a light theme, mcfly's default palette is unreadable on it
+    set -gx MCFLY_LIGHT TRUE
+    mcfly init fish | source
+end
+
+source {{ .chezmoi.homeDir }}/.safe-chain/scripts/init-fish.fish # Safe-chain Fish initialization script

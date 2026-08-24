@@ -1,0 +1,263 @@
+{
+  "semantic_tokens": "combined",
+  "collaboration_panel": {
+    "dock": "left",
+  },
+  "agent_servers": {
+    "pi-acp": {
+      "type": "registry",
+    },
+    "opencode": {
+      "type": "registry",
+    },
+    "claude-acp": {
+      "default_config_options": {
+        "model": "opus[1m]",
+      },
+      "type": "registry",
+    },
+  },
+  "tab_size": 2,
+  "relative_line_numbers": "enabled",
+  "auto_signature_help": false,
+  "which_key": {
+    "enabled": true,
+  },
+  "unnecessary_code_fade": 0.4,
+  "ui_font_family": "MonoLisa",
+  "buffer_font_family": "MonoLisa",
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "session": {
+    "trust_all_worktrees": true,
+  },
+  "vim_mode": true,
+  "icon_theme": {
+    "mode": "dark",
+    "light": "Catppuccin Mocha",
+    "dark": "Catppuccin Latte",
+  },
+  "ui_font_size": 15.0,
+  "buffer_font_size": 13.0,
+  "theme": {
+    "mode": "system",
+    "light": "Everforest Light Hard (regular)",
+    "dark": "Everforest Light Hard (regular)",
+  },
+  "theme_overrides": {
+    "Gruvbox Dark Soft": {
+      "syntax": {
+        "property.comment": { "color": "#ea6962", "font_weight": 700 },
+        "keyword.comment": { "color": "#e78a4e", "font_weight": 700 },
+        "constant.comment": { "color": "#7daea3", "font_weight": 700 },
+        "string.comment": { "color": "#89b482", "font_weight": 700 },
+      },
+    },
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true,
+      "padding": 4,
+      "min_column": 40,
+      "update_debounce_ms": 1500,
+    },
+  },
+  "prettier": {
+    "parser": "",
+    "allowed": true,
+  },
+  "use_smartcase_search": true,
+  "search": {
+    "case_sensitive": true,
+  },
+  "git": {
+    "blame": {
+      "show_avatar": false,
+    },
+    "inline_blame": {
+      "enabled": true,
+      "delay_ms": 600,
+    },
+  },
+  "vim": {
+    "use_smartcase_find": true,
+    "toggle_relative_line_numbers": true,
+  },
+  "toolbar": {
+    "code_actions": true,
+  },
+  "seed_search_query_from_cursor": "selection",
+  "git_panel": {
+    "dock": "left",
+    "tree_view": false,
+  },
+  "outline_panel": {
+    "dock": "right",
+  },
+  "project_panel": {
+    "dock": "left",
+    "hide_gitignore": true,
+  },
+  "cursor_shape": "bar",
+  "tab_bar": {
+    "show_tab_bar_buttons": false,
+    "show_nav_history_buttons": false,
+    "show": false,
+  },
+  "indent_guides": {
+    "active_line_width": 2,
+    "background_coloring": "disabled",
+    "coloring": "fixed",
+  },
+  "context_servers": {
+    "mcp-server-mui": {
+      "enabled": false,
+      "remote": false,
+      "settings": {},
+    },
+    "bun-docs-mcp": {
+      "enabled": false,
+      "remote": false,
+      "settings": {},
+    },
+    "mcp-server-linear": {
+      "enabled": true,
+      "remote": false,
+      "settings": {},
+    },
+    "postgres-context-server": {
+      "enabled": true,
+      "remote": false,
+      "settings": {},
+    },
+  },
+  "agent": {
+    "dock": "right",
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "claude-opus-4.6",
+      "enable_thinking": false,
+    },
+    "default_profile": "ask",
+    "play_sound_when_agent_done": "always",
+    "use_modifier_to_send": true,
+    "tool_permissions": {
+      "default": "confirm",
+      "tools": {
+        "fetch": {
+          "default": "allow",
+        },
+        "list_directory": {
+          "default": "allow",
+        },
+        "read_file": {
+          "default": "allow",
+        },
+        "terminal": {
+          "default": "confirm",
+          "always_allow": [
+            {
+              "pattern": "^(ls|pwd|git status|git diff)",
+            },
+            {
+              "pattern": "^(npm|pnpm|bun) (run dev|test)",
+            },
+          ],
+        },
+        "mcp:mcp-server-context7:resolve-library-id": {
+          "default": "allow",
+        },
+        "mcp:mcp-server-context7:query-docs": {
+          "default": "allow",
+        },
+      },
+    },
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-opus-4.6",
+    },
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "terminal": {
+    "env": {
+      "CLAUDE_CODE_EXECUTABLE": "{{ .chezmoi.homeDir }}/.local/bin/claude",
+    },
+    "font_family": "Maple Mono NL NF",
+    "font_size": 14,
+    "shell": {
+      "program": "/opt/homebrew/bin/fish",
+    },
+  },
+  "languages": {
+    "Ruby": {
+      "language_servers": [
+        "ruby-lsp",
+        "rubocop",
+        "!steep",
+        "!sorbet",
+        "!solargraph",
+        "!kanayago",
+        "!fuzzy-ruby-server",
+        "...",
+      ],
+      "formatter": "language_server",
+      "format_on_save": "on",
+    },
+    "Svelte": {
+      "language_servers": [
+        "svelte-language-server",
+        "!ruby-lsp",
+        "!solargraph",
+        "...",
+      ],
+      "formatter": "prettier",
+      "format_on_save": "on",
+    },
+    "TypeScript": {
+      "language_servers": ["!vtsls", "typescript-language-server", "..."],
+      "formatter": "prettier",
+      "format_on_save": "on",
+    },
+    "TSX": {
+      "language_servers": ["!vtsls", "typescript-language-server", "..."],
+    },
+    "JavaScript": {
+      "language_servers": [
+        "!vtsls",
+        "eslint",
+        "typescript-language-server",
+        "!tailwindcss-language-server",
+        "!svelte-language-server",
+        "!ruby-lsp",
+        "!solargraph",
+        "...",
+      ],
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true,
+      },
+      "formatter": {
+        "language_server": {
+          "name": "eslint",
+        },
+      },
+      "format_on_save": "on",
+    },
+    "SCSS": {
+      "formatter": {
+        "external": {
+          "command": "stylelint",
+          "arguments": ["--stdin-filename", "{buffer_path}", "--fix"],
+        },
+      },
+      "format_on_save": "on",
+    },
+  },
+  "extend_comment_on_newline": false,
+  "edit_predictions": {
+    "allow_data_collection": "no",
+    "provider": "copilot",
+  },
+}

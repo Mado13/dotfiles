@@ -1,0 +1,100 @@
+prSections:
+  - title: " review"
+    filters: is:open review-requested:@me draft:false
+  - title: " mine"
+    filters: is:open author:@me
+  - title: " involved"
+    filters: is:open involves:@me -author:@me
+
+issuesSections:
+  - title: " authored"
+    filters: is:open author:@me
+  - title: " assigned"
+    filters: is:open assignee:@me
+  - title: " Stimulus"
+    filters: is:open milestone:stimulus
+
+notificationsSections:
+  - title: " all"
+    filters: ""
+
+repoPaths:
+  :owner/:repo: ~/code/:owner/:repo
+
+keybindings:
+  universal:
+    - key: R
+      name: refresh all
+      command: ""
+      builtin: refreshAll
+    - key: "["
+      name: prev section
+      builtin: prevSection
+    - key: "]"
+      name: next section
+      builtin: nextSection
+  prs:
+    - key: z
+      name: open in Zed
+      command: zed {{.RepoPath}}
+    - key: m
+      name: merge
+      command: gh pr merge --squash --repo {{.RepoName}} {{.PrNumber}}
+    - key: v
+      name: approve
+      command: gh pr review --repo {{.RepoName}} --approve {{.PrNumber}}
+    - key: x
+      name: request changes
+      command: gh pr review --repo {{.RepoName}} --request-changes {{.PrNumber}}
+    - key: C
+      name: close pr
+      command: gh pr close --repo {{.RepoName}} {{.PrNumber}}
+    - key: b
+      name: open PR branch in browser
+      command: gh pr view --web --repo {{.RepoName}} {{.PrNumber}}
+    - key: l
+      name: view checks
+      command: gh pr checks --repo {{.RepoName}} {{.PrNumber}}
+    - key: d
+      name: jj diff PR
+      command: tmux new-window 'cd {{.RepoPath}} && jj git fetch && jj diff -r {{.HeadRefName}}'
+
+repo:
+  branchesRefetchIntervalSeconds: 30
+  prsRefetchIntervalSeconds: 60
+
+defaults:
+  preview:
+    open: true
+    width: 70
+  prsLimit: 20
+  issuesLimit: 20
+  refetchIntervalMinutes: 30
+  view: prs
+  layout:
+    prs:
+      updatedAt:
+        width: 8
+      repo:
+        width: 15
+      author:
+        width: 12
+      lines:
+        width: 10
+      checkStatus:
+        width: 5
+    issues:
+      updatedAt:
+        width: 8
+      repo:
+        width: 15
+
+theme:
+  ui:
+    sectionsShowCount: true
+    table:
+      showSeparator: false
+      compact: true
+
+confirmQuit: false
+showAuthorIcons: true

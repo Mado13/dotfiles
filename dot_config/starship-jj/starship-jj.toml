@@ -1,0 +1,69 @@
+# starship-jj prompt. modules render top-to-bottom.
+module_separator = " "
+reset_color = true
+
+[bookmarks]
+search_depth = 100
+exclude = []
+
+[[module]]
+type = "Symbol"
+symbol = "󱗆 "
+color = "Blue"
+
+# change id is the handle for `jj edit <id>`. description collapsed (max_length=0) since it's noise;
+# the tool couples id+description in one module, so a lone truncation mark is unavoidable when desc exists.
+[[module]]
+type = "Commit"
+max_length = 0
+empty_text = ""
+surround_with_quotes = false
+[module.change]
+fg = "Magenta"
+
+# full bookmark name, no truncation
+[[module]]
+type = "Bookmarks"
+separator = " "
+color = "Cyan"
+behind_symbol = "⇡"
+max_bookmarks = 1
+surround_with_quotes = false
+
+[[module]]
+type = "State"
+separator = " "
+[module.conflict]
+disabled = false
+text = "(conflict)"
+color = "Red"
+[module.divergent]
+disabled = false
+text = "(divergent)"
+color = "Cyan"
+[module.immutable]
+disabled = false
+text = "(immutable)"
+color = "Yellow"
+[module.hidden]
+disabled = false
+text = "(hidden)"
+color = "Yellow"
+[module.empty]
+disabled = true
+text = "(empty)"
+color = "Yellow"
+
+[[module]]
+type = "Metrics"
+template = "[{changed} {added}{removed}]"
+hide_if_empty = true
+color = "Magenta"
+[module.changed_files]
+color = "Cyan"
+[module.added_lines]
+prefix = "+"
+color = "Green"
+[module.removed_lines]
+prefix = "-"
+color = "Red"

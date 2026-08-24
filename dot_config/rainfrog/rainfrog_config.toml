@@ -1,0 +1,8 @@
+[settings]
+mouse_mode = false
+data_compact_columns = true
+data_row_spacer = false
+
+[db]
+tempi-local = { host = "localhost", driver = "postgres", port = 5432, database = "tempi_development", username = "postgres", default = true }
+tempi-prod = { connection_string = "postgresql://user:pass@your-neon-host/tempi", driver = "postgres" }

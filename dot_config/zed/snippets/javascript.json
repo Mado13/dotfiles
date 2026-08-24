@@ -1,0 +1,13 @@
+{
+  "Stimulus Controller": {
+    "prefix": "stim",
+    "body": [
+      "import { Controller } from '@hotwired/stimulus';",
+      "",
+      "export default class extends Controller {",
+      "  $0",
+      "}"
+    ],
+    "description": "Stimulus controller boilerplate"
+  }
+}

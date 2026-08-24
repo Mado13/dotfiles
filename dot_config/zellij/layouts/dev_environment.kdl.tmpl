@@ -1,0 +1,14 @@
+layout {
+    pane split_direction="vertical" {
+        // Main pane (larger) for your Rails server
+        pane size="70%" name="Rails Server" {
+            command "fish"
+            args "-c" "cd $(zoxide query {{ if hasKey . "work" }}{{ .work.name }}{{ else }}.{{ end }}) && bin/dev; exec fish"
+        }
+        
+        pane name="Elasticsearch" {
+            command "fish"
+            args "-c" "while true; docker rm -f elastic8 2>/dev/null || true; docker run --restart unless-stopped --name elastic8 --detach -e xpack.security.enabled=false -e discovery.type=single-node -p 127.0.0.1:9200:9200 -m 1GB docker.elastic.co/elasticsearch/elasticsearch:8.17.1 && docker logs -f elastic8; docker stop elastic8 2>/dev/null || true; echo 'Press Enter to restart Elasticsearch or Ctrl+D to exit'; read -P '' || break; end; exec fish"
+        }
+    }
+}

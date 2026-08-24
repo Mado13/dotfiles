@@ -1,0 +1,9 @@
+{
+  "theme": "Atom One",
+  "selectedAuthType": "oauth-personal",
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  }
+}

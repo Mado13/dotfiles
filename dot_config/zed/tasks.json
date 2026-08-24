@@ -1,0 +1,136 @@
+[
+  // ── Code snapshot to clipboard ────────────────────────────────
+  // Takes the selected text in the current file and copies a
+  // syntax-highlighted image of it to the clipboard via codesnap.
+  {
+    "label": "CodeSnap",
+    "command": "codesnap",
+    "args": [
+      "-o",
+      "clipboard",
+      "--file-path",
+      "$ZED_RELATIVE_FILE",
+      "--has-line-number",
+      "--start-line-number",
+      "$ZED_ROW",
+      "--has-breadcrumbs",
+      "true",
+      "-c",
+      "$ZED_SELECTED_TEXT",
+    ],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "reveal_target": "dock",
+    "hide": "on_success",
+    "shell": "system",
+  },
+
+  // ── jjui — full repo view ─────────────────────────────────────
+  // Opens jjui showing all your commits (the default jjui view).
+  // JJ_EDITOR makes commit message editing open in Zed.
+  {
+    "label": "jjui",
+    "command": "jjui",
+    "env": {
+      "JJ_EDITOR": "zed -w",
+    },
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal_target": "center",
+    "hide": "on_success",
+    "shell": { "program": "fish" },
+  },
+
+  // ── jjui — current branch only ────────────────────────────────
+  // Opens jjui scoped to just the commits on your current bookmark
+  // (branch), from trunk up to your working copy. Useful for
+  // reviewing a PR stack without noise from other work.
+  {
+    "label": "jj branch log",
+    "command": "jjui",
+    "args": ["-r", "trunk()..((::@ | @::) & bookmarks())"],
+    "env": {
+      "JJ_EDITOR": "zed -w",
+    },
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal_target": "center",
+    "hide": "on_success",
+    "shell": { "program": "fish" },
+  },
+
+  // ── jj diff — current file ────────────────────────────────────
+  // Shows what changed in the file you're currently editing,
+  // relative to the parent commit.
+  {
+    "label": "jj diff (file)",
+    "command": "jj",
+    "args": ["diff", "$ZED_RELATIVE_FILE"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal_target": "center",
+    "hide": "never",
+    "shell": { "program": "fish" },
+  },
+
+  // ── jj diff — whole project ───────────────────────────────────
+  // Shows all uncommitted changes across the entire project.
+  {
+    "label": "jj diff (project)",
+    "command": "jj",
+    "args": ["diff"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal_target": "center",
+    "hide": "never",
+    "shell": { "program": "fish" },
+  },
+
+  // ── gh dash ───────────────────────────────────────────────────
+  // Opens the GitHub dashboard (PRs, issues) in a persistent tmux
+  // session called "dash". Reattaches if already running.
+  {
+    "label": "gh dash",
+    "command": "tmux",
+    "args": ["new-session", "-A", "-s", "dash", "gh dash"],
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal_target": "center",
+    "hide": "on_success",
+    "shell": { "program": "fish" },
+  },
+
+  // ── RSpec — single line ───────────────────────────────────────
+  // Runs the single test on the line your cursor is on.
+  {
+    "label": "rspec $ZED_RELATIVE_FILE:$ZED_ROW",
+    "command": "bin/rspec",
+    "args": ["$ZED_RELATIVE_FILE:$ZED_ROW"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "tags": ["ruby-test"],
+    "reveal": "always",
+  },
+
+  // ── RSpec — whole file ────────────────────────────────────────
+  // Runs every test in the file you're currently editing.
+  {
+    "label": "rspec $ZED_RELATIVE_FILE",
+    "command": "bin/rspec",
+    "args": ["$ZED_RELATIVE_FILE"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "tags": ["ruby-test"],
+    "reveal": "always",
+  },
+
+  // ── RSpec — full suite ────────────────────────────────────────
+  // Runs the entire test suite.
+  {
+    "label": "rspec (all)",
+    "command": "bin/rspec",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+  },
+]

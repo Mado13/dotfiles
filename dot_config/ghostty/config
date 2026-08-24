@@ -1,0 +1,98 @@
+# attach to tmux instead of a bare shell, so tabs are tmux windows and aerospace
+# only ever sees one ghostty window. fish comes from tmux's default-shell.
+# to get a plain shell back: comment this out and use the fish -l line below.
+command = /opt/homebrew/bin/tmux new-session -A -s main
+# command = /opt/homebrew/bin/fish -l
+
+# font
+# MonoLisa here is the variable build, so weight comes off the wght axis, not
+# a per-weight family name. "MonoLisa Medium" is not a family and silently
+# falls back to the bundled JetBrains Mono.
+# regular sits at 500 so it reads heavier without looking bold, bold at 600
+# stays a step above that.
+font-family = MonoLisa
+font-variation = wght=500
+font-variation-italic = wght=500
+font-variation-bold = wght=600
+font-variation-bold-italic = wght=600
+font-size = 12.5
+adjust-cell-height = 15%
+font-feature = zero
+font-feature = ss01
+font-feature = ss04
+font-feature = ss05
+font-feature = ss06
+font-feature = ss07
+font-feature = ss12
+font-feature = ss15
+font-feature = ss16
+
+theme = Everforest Light Soft
+
+# draggable titlebar, start maximized (replaces the gui-startup hook)
+macos-titlebar-style = tabs
+maximize = true
+window-padding-y = 0
+
+# behavior
+# forward terminfo so remote ssh sessions aren't garbled
+shell-integration-features = ssh-terminfo,ssh-env
+# option sends Alt/Meta for nvim/fish keymaps
+macos-option-as-alt = true
+# don't dim inactive splits
+unfocused-split-opacity = 1
+# no prompt on remote OSC-52 yank
+clipboard-read = allow
+# no OSC 9;4 progress bars
+progress-style = false
+# ⌘W on the last window quits the app
+quit-after-last-window-closed = true
+
+# cmd keys drive tmux. each one sends a private CSI sequence that tmux picks up as a
+# user-key in its root table, so no prefix and no keys stolen from nvim or fish.
+# don't go back to text:\x00... - a text: action can't carry a NUL byte, and macos
+# owns C-Space for input source switching anyway.
+#
+# digits are bound in both forms on purpose. ghostty ships cmd+1=goto_tab AND
+# cmd+digit_1=goto_tab, and a user override of one still loses to the other
+# (ghostty-org/ghostty discussions 8756, 3187). the csi: action on the physical key
+# is what people report actually landing.
+keybind = cmd+1=csi:9101~
+keybind = cmd+digit_1=csi:9101~
+keybind = cmd+2=csi:9102~
+keybind = cmd+digit_2=csi:9102~
+keybind = cmd+3=csi:9103~
+keybind = cmd+digit_3=csi:9103~
+keybind = cmd+4=csi:9104~
+keybind = cmd+digit_4=csi:9104~
+keybind = cmd+5=csi:9105~
+keybind = cmd+digit_5=csi:9105~
+keybind = cmd+6=csi:9106~
+keybind = cmd+digit_6=csi:9106~
+keybind = cmd+7=csi:9107~
+keybind = cmd+digit_7=csi:9107~
+keybind = cmd+8=csi:9108~
+keybind = cmd+digit_8=csi:9108~
+keybind = cmd+9=csi:9109~
+keybind = cmd+digit_9=csi:9109~
+
+keybind = cmd+b=csi:9110~
+keybind = cmd+t=csi:9111~
+keybind = cmd+shift+left_bracket=csi:9112~
+keybind = cmd+shift+right_bracket=csi:9113~
+keybind = cmd+d=csi:9114~
+keybind = cmd+shift+d=csi:9115~
+keybind = cmd+enter=csi:9120~
+keybind = cmd+shift+r=csi:9121~
+# cmd+w closes the tmux window, not the ghostty one. cmd+q still quits the app.
+keybind = cmd+w=csi:9122~
+
+# vim pane nav. cmd+k is clear_screen by default, so it moves to cmd+shift+k
+keybind = cmd+h=csi:9116~
+keybind = cmd+j=csi:9117~
+keybind = cmd+k=csi:9118~
+keybind = cmd+l=csi:9119~
+keybind = cmd+shift+k=clear_screen
+
+# send Ctrl-S through to TUIs
+keybind = cmd+s=text:\x13

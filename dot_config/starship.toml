@@ -1,0 +1,167 @@
+# Everforest Light - Modern Minimal Starship Config
+# Optimized for developers who want clean, informative prompts
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Faster command timeout
+command_timeout = 1000
+
+# Add blank line between prompts for breathing room
+add_newline = true
+
+# Use Everforest Light palette
+palette = "everforest_light"
+
+# Modern minimal format - only what you need
+format = """
+[╭─](fg:green)\
+$username\
+$hostname\
+$directory\
+${custom.jj}\
+$nodejs\
+$python\
+$ruby\
+$rust\
+$golang\
+$php\
+$elixir\
+$docker_context\
+$fill\
+$cmd_duration
+[╰─](fg:green)$character"""
+
+# Right side prompt for time (optional - comment out if not needed)
+# right_format = """$time"""
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[username]
+format = "[$user]($style)[@](fg:green)"
+style_user = "fg:blue bold"
+style_root = "fg:red bold"
+show_always = false
+
+[hostname]
+format = "[$hostname]($style) "
+style = "fg:yellow bold"
+ssh_only = true
+ssh_symbol = "󰣀 "
+
+[directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "fg:aqua bold"
+read_only = " 󰌾"
+read_only_style = "fg:red"
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+
+# jj replaces git here; disable git modules (starship-jj can't auto-hide them in colocated repos)
+[git_branch]
+disabled = true
+
+[git_commit]
+disabled = true
+
+[git_state]
+disabled = true
+
+[git_status]
+disabled = true
+
+[git_metrics]
+disabled = true
+
+# driven by ~/.config/starship-jj/starship-jj.toml; `shell` is the binary+args, `command` is the final arg
+[custom.jj]
+command = "prompt"
+shell = ["starship-jj", "--ignore-working-copy", "starship"]
+format = "$output "
+when = "prompt"  # exits 0 only inside a jj repo, so the module (and its trailing space) drop out elsewhere
+ignore_timeout = true
+use_stdin = false
+
+[nodejs]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:green"
+detect_files = ["package.json", ".node-version"]
+detect_folders = ["node_modules"]
+
+[python]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:yellow"
+detect_extensions = ["py"]
+detect_files = [".python-version", "Pipfile", "requirements.txt", "pyproject.toml"]
+
+[ruby]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:red"
+detect_files = ["Gemfile", ".ruby-version"]
+detect_variables = ["RUBY_VERSION"]
+
+[rust]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:orange"
+detect_files = ["Cargo.toml"]
+
+[golang]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:blue"
+detect_files = ["go.mod", "go.sum"]
+
+[php]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:purple"
+detect_files = ["composer.json", ".php-version"]
+
+[elixir]
+format = "via [$symbol($version )]($style)"
+symbol = " "
+style = "fg:purple"
+detect_files = ["mix.exs"]
+
+[docker_context]
+format = "via [$symbol$context]($style) "
+symbol = " "
+style = "fg:blue"
+only_with_files = true
+
+[fill]
+symbol = " "
+
+[cmd_duration]
+format = "took [$duration]($style) "
+style = "fg:yellow"
+min_time = 2000
+show_milliseconds = false
+
+[time]
+format = "[$time]($style)"
+style = "fg:gray"
+disabled = true
+time_format = "%T"
+
+# Everforest Light Color Palette
+# Matches your WezTerm theme perfectly
+[palettes.everforest_light]
+bg0 = "#fff9e8"       # Light background
+bg1 = "#f7f4e0"       # Slightly darker bg
+fg = "#5c6a72"        # Main foreground
+red = "#f85552"       # Red accent
+orange = "#f57d26"    # Orange accent
+yellow = "#dfa000"    # Yellow accent
+green = "#8da101"     # Green accent
+aqua = "#35a77c"      # Aqua/cyan accent
+blue = "#3a94c5"      # Blue accent
+purple = "#df69ba"    # Purple accent
+gray = "#a6b0a0"      # Gray/comment color

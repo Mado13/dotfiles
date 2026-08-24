@@ -1,0 +1,17 @@
+# Read by the run_onchange script via `include`, not meant to land in $HOME.
+Brewfile
+
+README.md
+LICENSE
+
+# Written by tools, never by hand.
+.DS_Store
+**/.DS_Store
+.config/fish/fish_variables
+
+# Machine-local, deliberately unmanaged. Listed so it is obvious they are
+# a choice and not an oversight.
+.ssh/config.work
+.config/fish/secrets.fish
+.zsh_history
+.claude/settings.local.json

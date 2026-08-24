@@ -1,0 +1,28 @@
+#!/bin/bash
+set -eu
+
+# Brewfile sha256: {{ include "Brewfile" | sha256sum }}
+
+if ! command -v brew >/dev/null 2>&1; then
+    if [ -x /opt/homebrew/bin/brew ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+        echo "no brew, skipping the Brewfile. Re-run 'chezmoi apply' once it is there." >&2
+        exit 0
+    fi
+fi
+
+BREWFILE="{{ .chezmoi.sourceDir }}/Brewfile"
+
+# Third-party taps need trust confirmed one by one under an MDM policy that
+# blocks the prompt, so tap them up front and let a failure be visible.
+echo "==> taps and formulae"
+brew bundle install --file="$BREWFILE" --no-upgrade || {
+    echo
+    echo "brew bundle did not finish cleanly." >&2
+    echo "Casks needing a system extension (orbstack, malwarebytes)" >&2
+    echo "need admin approval. Install those by hand and re-run." >&2
+    exit 1
+}
+
+echo "==> pruning nothing on purpose: --cleanup is destructive, run it yourself"

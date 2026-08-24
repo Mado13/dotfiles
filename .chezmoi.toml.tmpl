@@ -1,0 +1,37 @@
+{{/*
+   Answers land in ~/.config/chezmoi/chezmoi.toml, which is never committed.
+   The flat keys below are what promptStringOnce looks up, so they have to be
+   written back verbatim or a re-init asks again. [data.work] and gitEmails are
+   derived from them, and are what the target templates read.
+   Every work answer may be blank: the templates that read them fall back.
+*/ -}}
+{{- $name      := promptStringOnce . "name"      "Git author name" -}}
+{{- $email     := promptStringOnce . "email"     "Primary git email" -}}
+{{- $emails    := promptStringOnce . "emails"    "Every git email you commit under, space separated" -}}
+{{- $workdir   := promptStringOnce . "workdir"   "Work dir under ~/code, blank for none" -}}
+{{- $workrepo  := promptStringOnce . "workrepo"  "Work repo name, blank for none" -}}
+{{- $workemail := promptStringOnce . "workemail" "Work git email, blank for none" -}}
+
+{{- $emailList := list $email -}}
+{{- if $emails }}{{ $emailList = compact (splitList " " $emails) }}{{ end -}}
+
+encryption = "age"
+
+[age]
+    symmetric = true
+
+[data]
+    name      = {{ $name | quote }}
+    email     = {{ $email | quote }}
+    emails    = {{ $emails | quote }}
+    workdir   = {{ $workdir | quote }}
+    workrepo  = {{ $workrepo | quote }}
+    workemail = {{ $workemail | quote }}
+
+    gitEmails = [{{ range $i, $e := $emailList }}{{ if $i }}, {{ end }}{{ $e | trim | quote }}{{ end }}]
+{{ if $workdir }}
+[data.work]
+    dir   = {{ $workdir | quote }}
+    name  = {{ $workrepo | quote }}
+    email = {{ $workemail | quote }}
+{{ end -}}

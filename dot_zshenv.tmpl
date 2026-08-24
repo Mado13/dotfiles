@@ -1,0 +1,6 @@
+# uv
+export PATH="{{ .chezmoi.homeDir }}/.local/bin:$PATH"
+
+# bun completions
+[ -s "{{ .chezmoi.homeDir }}/.bun/_bun" ] && source "{{ .chezmoi.homeDir }}/.bun/_bun"
+. "$HOME/.cargo/env"

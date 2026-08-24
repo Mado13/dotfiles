@@ -1,0 +1,9 @@
+function rails
+    if string match -q "{{ .chezmoi.homeDir }}/code/{{ if hasKey . "work" }}{{ .work.dir }}/{{ .work.name }}{{ else }}__none__{{ end }}*" "$PWD"
+        and test "$argv[1]" = s
+        echo "Running rails server with Gemfile.local"
+        BUNDLE_GEMFILE=Gemfile.local command rails $argv
+    else
+        command rails $argv
+    end
+end
