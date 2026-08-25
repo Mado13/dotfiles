@@ -7,6 +7,9 @@ jj.setup()
 
 local ci = require("circleci")
 
+local waka = require("waka_status")
+waka.setup()
+
 require("mini.statusline").setup({
 	use_icons = true,
 	content = {
@@ -30,7 +33,7 @@ require("mini.statusline").setup({
 				"%<",
 				{ hl = "MiniStatuslineFilename", strings = { filename } },
 				"%=",
-				{ hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+				{ hl = "MiniStatuslineFileinfo", strings = { waka.section(), fileinfo } },
 				{ hl = mode_hl, strings = { search, location } },
 			})
 		end,

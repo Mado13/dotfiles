@@ -1,8 +1,12 @@
-vim.pack.add({
-	{ src = "https://github.com/HotThoughts/jjui.nvim" },
-})
+-- jjui.nvim was 375 lines to open a float. Its one feature beyond that,
+-- use_neovim_remote, is the one ~/.config/jj/scripts/jj-editor.sh deliberately
+-- avoids: it closed the float on BufLeave, so the editor split tore the window
+-- down mid-squash.
+local float = require("float_term")
 
-require("jjui").setup({})
+vim.keymap.set("n", "<leader>jj", function()
+	float.toggle("jjui", "jjui")
+end, { desc = "jjui" })
 
 -- The <Esc><Esc> map in keymaps.lua ejects to normal mode on the jjui buffer,
 -- where q closes the float. Press it while jj is waiting on the description

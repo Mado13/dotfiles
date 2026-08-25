@@ -1,2 +1,11 @@
 [ui]
-theme = "base16-everforest-light-soft"
+theme = "base24-modus-operandi"
+
+# Preview is off until I press p. "bottom" rather than "right" for when I do:
+# float_term gives jjui 0.85 of the terminal, 130 columns at font-size 16, and
+# right:60% left the graph 52 of them. Splitting the height instead gives both
+# panes the full width, which is the axis code needs.
+[preview]
+show_at_start = false
+position = "bottom"
+width_percentage = 60.0

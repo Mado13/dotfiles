@@ -59,6 +59,9 @@ require("claudecode").setup({
 	log_level = "warn",
 	terminal = {
 		provider = "native",
+		-- default jumps back to the prompt on every <C-w> into the split, losing
+		-- the spot I scrolled up to read. `i` to type.
+		auto_insert = false,
 	},
 })
 
@@ -114,3 +117,17 @@ vim.api.nvim_create_autocmd("FileType", {
 			{ buffer = event.buf, desc = "Add file to Claude" })
 	end,
 })
+
+-- diff_inline.lua hardcodes #2a4a2a / #4a2a2a for the add and delete bands,
+-- dark-theme values that come out at 2.11:1 and 1.66:1 here and read as grey
+-- rather than green and red. It sets them with default = true, so defining them
+-- first wins. Same colours as diffview and delta use.
+local function claude_diff_hl()
+	vim.api.nvim_set_hl(0, "ClaudeCodeInlineDiffAdd", { bg = "#c1f2d1" })
+	vim.api.nvim_set_hl(0, "ClaudeCodeInlineDiffDelete", { bg = "#ffd8d5", strikethrough = true })
+	vim.api.nvim_set_hl(0, "ClaudeCodeInlineDiffAddSign", { fg = "#006800" })
+	vim.api.nvim_set_hl(0, "ClaudeCodeInlineDiffDeleteSign", { fg = "#a60000" })
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", { callback = claude_diff_hl })
+claude_diff_hl()

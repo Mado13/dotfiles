@@ -10,15 +10,24 @@ require("obsidian").setup({
 {{- end }}
 	},
 	picker = { name = "fzf-lua" },
-})
-
--- ui features (checkboxes, link hiding) need conceallevel 1 or 2, else the
--- plugin warns on every markdown buffer
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "markdown",
-	callback = function()
-		vim.opt_local.conceallevel = 2
-	end,
+	-- render-markdown.nvim draws every markdown buffer, vault or not. Both on
+	-- means doubled bullets and checkboxes.
+	ui = { enable = false },
+	-- the unlinked-mention code actions (<leader>ca) only show up with this on
+	cache = { enabled = true },
 })
 
 vim.keymap.set("n", "<leader>o", "<cmd>Obsidian quick_switch<cr>", { desc = "Obsidian: find note" })
+-- capital O so <leader>o stays a single key with no timeoutlen wait
+vim.keymap.set("n", "<leader>Op", "<cmd>Obsidian properties<cr>", { desc = "Obsidian: notes by property" })
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "ObsidianNoteEnter",
+	callback = function()
+		local opts = function(desc)
+			return { buffer = 0, desc = desc }
+		end
+		vim.keymap.set({ "n", "x" }, "<leader>Ol", "<cmd>Obsidian link<cr>", opts("Obsidian: link word to note"))
+		vim.keymap.set({ "n", "x" }, "<leader>On", "<cmd>Obsidian link_new<cr>", opts("Obsidian: link word to new note"))
+	end,
+})

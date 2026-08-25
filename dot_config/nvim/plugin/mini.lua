@@ -45,9 +45,21 @@ require("mini.notify").setup({
 	},
 })
 
+-- mini.notify paints the whole body with one group, and modus bolds every
+-- Diagnostic*. DiagnosticInfo is chroma 101, so an FYI arrived as a wall of bold
+-- navy. Own groups instead: info is plain text, only warn and error carry colour.
+local function notify_hl()
+	vim.api.nvim_set_hl(0, "NotifyInfo", { fg = "#000000" })
+	vim.api.nvim_set_hl(0, "NotifyWarn", { fg = "#6f5500" })
+	vim.api.nvim_set_hl(0, "NotifyError", { fg = "#a60000" })
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", { callback = notify_hl })
+notify_hl()
+
 -- make_notify's signature is (msg, level) only, a third opts arg is dropped
 vim.notify = require("mini.notify").make_notify({
-	ERROR = { duration = 7000, hl_group = "DiagnosticError" },
-	WARN = { duration = 6000, hl_group = "DiagnosticWarn" },
-	INFO = { duration = 4000, hl_group = "DiagnosticInfo" },
+	ERROR = { duration = 7000, hl_group = "NotifyError" },
+	WARN = { duration = 6000, hl_group = "NotifyWarn" },
+	INFO = { duration = 4000, hl_group = "NotifyInfo" },
 })

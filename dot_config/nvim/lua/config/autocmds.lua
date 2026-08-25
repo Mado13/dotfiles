@@ -13,19 +13,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Line numbers are noise in utility/read-only buffers, turn them off there
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = {
-		"help",
-		"qf",
-		"checkhealth",
-		"lspinfo",
-		"gitsigns-blame",
-		"man",
-		"trouble",
-		"oil",
-		"undotree",
-		"diff",
-		"grug-far",
-	},
+	pattern = vim.g.util_filetypes,
 	callback = function()
 		vim.opt_local.number = false
 		vim.opt_local.relativenumber = false
@@ -42,7 +30,12 @@ vim.api.nvim_create_autocmd("TermOpen", {
 
 -- Reload buffers automatically if the file changed on disk (Claude Code edits, jj/git ops, etc.)
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold" }, {
-	command = "checktime",
+	callback = function()
+		-- E11: checktime is one of the commands the cmdline window forbids
+		if vim.fn.getcmdwintype() == "" then
+			vim.cmd("checktime")
+		end
+	end,
 })
 
 vim.api.nvim_create_autocmd("TextYankPost", {

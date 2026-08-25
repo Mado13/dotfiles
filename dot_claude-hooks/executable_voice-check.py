@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Catches AI tells in text written as Matan. Word list mirrors the Voice
-section of ~/.claude/CLAUDE.md.
+"""Catches AI tells in text written as Matan. The banned words live only here:
+~/.claude-shared/voice.md leaves them out on purpose, since naming them in a
+prompt primes them.
 
-Two events, one script:
-  Stop        scans comments added in the working diff
-  PreToolUse  scans commit/PR/comment text in a Bash command before it runs
+Three events, one script:
+  Stop         scans comments added in the working diff
+  PreToolUse   scans commit/PR/comment text in a Bash command before it runs
+  PostToolUse  scans comment smells in a file just written
 
 Only comment text is checked in diffs, never code, so a variable named
 `landscape` or a fixture string won't trip it.
@@ -128,18 +130,24 @@ def working_diff():
 
 
 def added_comments(diff):
-    path = "?"
+    """Yields (path, text, opens_block). Only a block's first line is a sentence start."""
+    path, prev = "?", False
     for line in diff.splitlines():
+        cur = False
         if line.startswith("+++ "):
             path = line[4:].strip()
             path = path[2:] if path.startswith("b/") else path
         elif line.startswith("+") and not line.startswith("+++"):
-            if path.lower().endswith(SKIP_EXT):
-                continue
             body = line[1:]
-            m = whole_line_re(path).match(body) or TRAILING.search(body)
+            m, whole = None, False
+            if not path.lower().endswith(SKIP_EXT):
+                m = whole_line_re(path).match(body)
+                whole = bool(m)
+                m = m or TRAILING.search(body)
             if m and m.group(1):
-                yield path, m.group(1)
+                cur = whole
+                yield path, m.group(1), not (prev and whole)
+        prev = cur
 
 
 # --- PostToolUse: comment smells in what was just written ---------------------
@@ -169,6 +177,19 @@ COMMENTED_CODE = re.compile(
     r"|[;{}]\s*$")
 RESTATE_MIN_WORDS = 2
 RESTATE_RATIO = 0.6
+# Claude opens narration with a capitalised base verb ("Check if", "Send the").
+# My own comments are declarative or lowercase. Measured on 196 comments I kept:
+# 2 hits, against 24 of 24 samples of the junk.
+NARRATION_VERBS = """get set check create return send loop fetch initialize initialise init make
+update save delete remove validate call define import iterate add build find load parse convert
+handle process render assign store run ensure extract generate clear reset apply start stop open
+close read write print log filter sort map count compute calculate determine pass wrap setup
+declare configure register mark revoke rescue raise reload retrieve query perform execute invoke
+instantiate verify confirm toggle append merge join split trim strip normalize sanitize format
+serialize encode decode enqueue dispatch trigger emit notify lookup now""".split()
+NARRATION = re.compile(
+    r"^(?:%s)\b|^(?:This (?:method|class|function|module|helper|is|will)|We|Let's|Handles?)\b"
+    % "|".join(w.capitalize() for w in NARRATION_VERBS))
 
 
 def words(s):
@@ -188,6 +209,8 @@ def comment_smells(body, code):
         out.append("attribution, drop it")
     if COMMENTED_CODE.search(body):
         out.append("commented-out code")
+    if NARRATION.match(body):
+        out.append("narrates the what, say why or delete it")
     cw = words(body)
     if code and len(cw) >= RESTATE_MIN_WORDS:
         shared = cw & words(code)
@@ -233,15 +256,17 @@ def check_written(payload):
         sys.exit(0)
     print("Comment check on %s:" % inp.get("file_path", "?"), file=sys.stderr)
     print("\n".join(hits[:15]), file=sys.stderr)
-    print("Delete them unless they pass both tests in ~/.claude-hooks/comments.md.",
+    print("Delete them unless they pass both tests in ~/.claude-shared/comments.md.",
           file=sys.stderr)
     sys.exit(2)
 
 
 def check_diff():
     hits = []
-    for path, text in added_comments(working_diff()):
+    for path, text, opens in added_comments(working_diff()):
         rs = reasons_for(text)
+        if opens and NARRATION.match(text):
+            rs.append("narrates the what")
         if rs:
             hits.append("  %s: %s\n    %s" % (path, ", ".join(rs), text[:160]))
     if not hits:
@@ -250,7 +275,7 @@ def check_diff():
     print("\n".join(hits[:25]), file=sys.stderr)
     if len(hits) > 25:
         print("  ... and %d more" % (len(hits) - 25), file=sys.stderr)
-    print("Rewrite per the Voice section of your CLAUDE.md, then finish.",
+    print("Rewrite per ~/.claude-shared/voice.md, then finish.",
           file=sys.stderr)
     sys.exit(2)
 
@@ -263,10 +288,20 @@ def check_diff():
 SEGMENT = r"(?:^|[\n;]|&&|\|\|)\s*(?:\w+=\S+\s+)*"
 WRITES_TEXT = re.compile(
     SEGMENT + r"(jj\s+(describe|commit|new)|git\s+commit|gh\s+(pr|issue|release)\s+"
-    r"(create|edit|comment|review|close))\b"
+    r"(create|edit|comment|review|close)|gh\s+api)\b"
 )
 # structure rules below are commit-only, a PR body has no 70-char subject
 COMMIT_CMD = re.compile(SEGMENT + r"(jj\s+(describe|commit|new)|git\s+commit)\b")
+# inline review comments only go out through `gh api .../comments -f body=...`
+COMMENT_CMD = re.compile(SEGMENT + r"gh\s+((pr|issue)\s+comment|api)\b")
+# `-F "body=..."` is already picked up by QUOTED, so only lowercase -f takes the quoted-key form here
+API_BODY = re.compile(
+    r"(?:-f|-F|--field|--raw-field)[= ]\s*body=(\"(?:[^\"\\]|\\.)*\"|'[^']*')"
+    r"|(?:-f|--field|--raw-field)[= ]\s*(?:\"body=((?:[^\"\\]|\\.)*)\"|'body=([^']*)')")
+# p90 of pre-2021 co2m: inline review comment 74 words, conversation 97, commit body 47
+COMMENT_MAX_WORDS = 90
+COMMIT_BODY_MAX_WORDS = 50
+FORCE = re.compile(r"#\s*force\s*$", re.M)
 SUBJECT_MAX = 70
 # past tense or third person, git itself writes the imperative
 NOT_IMPERATIVE = re.compile(
@@ -321,6 +356,20 @@ def structure_reasons(text):
     if ATTRIBUTION.search(text):
         out.append("AI attribution, drop it")
     return out
+
+
+def length_reasons(text, kind):
+    if kind == "commit":
+        n = len(" ".join(text.splitlines()[2:]).split())
+        if n > COMMIT_BODY_MAX_WORDS:
+            return ["%d-word commit body, one or two lines is the norm" % n]
+    if kind == "comment":
+        n = len(text.split())
+        if n > COMMENT_MAX_WORDS:
+            return ["%d-word comment, most here run about 20" % n]
+    return []
+
+
 QUOTED = re.compile(
     r"(?:-m|--message|-t|--title|-b|--body|-F|--body-file)[= ]\s*"
     r"(\"(?:[^\"\\]|\\.)*\"|'[^']*')"
@@ -340,19 +389,26 @@ def check_command(cmd):
     # merely shares the command line, and scanning it flags Python as prose.
     if READS_STDIN.search(cmd):
         chunks += [m.group(2) for m in HEREDOC.finditer(cmd)]
+    for m in API_BODY.finditer(cmd):
+        chunks.append(m.group(1)[1:-1] if m.group(1) else (m.group(2) or m.group(3) or ""))
     is_commit = bool(COMMIT_CMD.search(cmd))
+    kind = "commit" if is_commit else "comment" if COMMENT_CMD.search(cmd) else None
     hits = []
     for text in chunks:
         rs = reasons_for(text)
         if is_commit:
             rs += structure_reasons(text)
+        if not FORCE.search(cmd):
+            rs += length_reasons(text, kind)
         if rs:
             hits.append("  %s\n    %s" % (", ".join(rs), text[:200]))
     if not hits:
         sys.exit(0)
     print("Message check, fix these before running it again:", file=sys.stderr)
     print("\n".join(hits), file=sys.stderr)
-    print("Voice rules are in your CLAUDE.md, commit rules in the repo's.",
+    print("Voice rules are in ~/.claude-shared/voice.md, commit rules in the repo's CLAUDE.md.",
+          file=sys.stderr)
+    print("Over a length limit: cut it. Append # force only when I asked for the long version.",
           file=sys.stderr)
     sys.exit(2)
 

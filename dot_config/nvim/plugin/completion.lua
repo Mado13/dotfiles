@@ -14,4 +14,12 @@ require("blink.cmp").setup({
 	},
 	fuzzy = { implementation = "prefer_rust" },
 	signature = { enabled = true },
+	cmdline = {
+		completion = {
+			-- blink only auto-shows the cmdline menu in the command-line window by
+			-- default. At the ":" prompt you get ghost text and have to ask for the
+			-- rest, which is the half that felt missing.
+			menu = { auto_show = true },
+		},
+	},
 })

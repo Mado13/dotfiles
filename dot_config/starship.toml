@@ -9,8 +9,8 @@ command_timeout = 1000
 # Add blank line between prompts for breathing room
 add_newline = true
 
-# Use Everforest Light palette
-palette = "everforest_light"
+# Use modus-operandi palette
+palette = "modus_operandi"
 
 # Modern minimal format - only what you need
 format = """
@@ -151,17 +151,17 @@ style = "fg:gray"
 disabled = true
 time_format = "%T"
 
-# Everforest Light Color Palette
-# Matches your WezTerm theme perfectly
-[palettes.everforest_light]
-bg0 = "#fff9e8"       # Light background
-bg1 = "#f7f4e0"       # Slightly darker bg
-fg = "#5c6a72"        # Main foreground
-red = "#f85552"       # Red accent
-orange = "#f57d26"    # Orange accent
-yellow = "#dfa000"    # Yellow accent
-green = "#8da101"     # Green accent
-aqua = "#35a77c"      # Aqua/cyan accent
-blue = "#3a94c5"      # Blue accent
-purple = "#df69ba"    # Purple accent
-gray = "#a6b0a0"      # Gray/comment color
+# modus-operandi, default variant. Stock palette.
+# Matches ghostty, nvim, delta and jj. Not wezterm, which is on a dark theme.
+[palettes.modus_operandi]
+bg0 = "#ffffff"       # Light background
+bg1 = "#f2f2f2"       # Slightly darker bg
+fg = "#000000"        # Main foreground
+red = "#a60000"       # Red accent
+orange = "#884900"    # Orange accent
+yellow = "#6f5500"    # Yellow accent
+green = "#006800"     # Green accent
+aqua = "#005e8b"      # Aqua/cyan accent
+blue = "#0031a9"      # Blue accent
+purple = "#721045"    # Purple accent
+gray = "#595959"      # Gray/comment color

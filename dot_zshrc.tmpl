@@ -2,3 +2,7 @@ export PATH="/Applications/WezTerm.app/Contents/MacOS:$PATH"
 
 export PATH="$HOME/.local/bin:$PATH"
 source {{ .chezmoi.homeDir }}/.safe-chain/scripts/init-posix.sh # Safe-chain Zsh initialization script
+
+
+# Added by Antigravity CLI installer
+export PATH="{{ .chezmoi.homeDir }}/.local/bin:$PATH"

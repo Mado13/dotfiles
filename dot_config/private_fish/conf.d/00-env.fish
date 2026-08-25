@@ -11,8 +11,9 @@ fish_add_path --global --path --prepend /opt/homebrew/opt/libxml2/bin
 fish_add_path --global --path --prepend ~/.bun/bin ~/.local/bin ~/.cargo/bin
 
 # rv owns ruby, and it has to be out here. inside the interactive guard a
-# non-interactive shell inherits whatever ruby the parent happened to have,
-# which is how a repo ended up on 3.3.2 while its .ruby-version says 4.0.6
-# absolute path: homebrew ships an rv too, and it activates ~/.rubies/ruby-3.3.2
-# instead of the .ruby-version pick, so never let PATH order decide which wins
-$HOME/.cargo/bin/rv shell init fish | source
+# non-interactive shell keeps the parent's ruby, so a repo ran the wrong one
+# absolute path so PATH order never picks the rv. brew keeps this one current
+/opt/homebrew/bin/rv shell init fish | source
+
+# puts each project's bin/ on PATH, so rake resolves the Gemfile.lock version
+direnv hook fish | source

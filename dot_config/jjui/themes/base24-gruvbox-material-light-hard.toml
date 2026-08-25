@@ -1,0 +1,77 @@
+# Scheme name: Gruvbox Material Light Hard
+# Based on tinted-jjui format
+
+"text"      = { fg = "#3c3836", bg = "#f9f5d7" }
+"dimmed"    = { fg = "#786b60", bg = "#f9f5d7" }
+"title"     = { fg = "#076678", bold = true }
+"shortcut"  = { fg = "#8f3f71" }
+"matched"   = { fg = "#b57614" }
+"border"    = { fg = "#786b60" }
+"selected"  = { bg = "#f5edca", fg = "#3c3836", bold = true }
+
+"source_marker" = { bg = "#427b58", fg = "#f9f5d7", bold = true }
+"target_marker" = { bg = "#79740e", fg = "#f9f5d7", bold = true }
+
+"status" = { bg = "#f3eac7" }
+"status title" = { fg = "#f9f5d7", bg = "#79740e", bold = true }
+
+"revset title" = { fg = "#076678", bold = true }
+"revset text" = { fg = "#3c3836", bold = true }
+"revset completion text" = { fg = "#3c3836" }
+"revset completion matched" = { fg = "#b57614", bold = true }
+"revset completion dimmed" = { fg = "#786b60" }
+"revset completion selected" = { bg = "#dde5c2", fg = "#3c3836" }
+
+"revisions" = { fg = "#3c3836" }
+"revisions selected" = { bg = "#dde5c2" }
+"revisions dimmed" = { fg = "#786b60" }
+"revisions details selected" = { bg = "#dde5c2" }
+"oplog selected" = { bold = true }
+
+"evolog" = { fg = "#3c3836" }
+"evolog selected" = { bg = "#dde5c2", fg = "#3c3836", bold = true }
+
+"menu" = { bg = "#f9f5d7" }
+"menu title" = { fg = "#f9f5d7", bg = "#8f3f71", bold = true }
+"menu shortcut" = { fg = "#8f3f71" }
+"menu matched" = { fg = "#b57614", bold = true }
+"menu dimmed" = { fg = "#786b60" }
+"menu border" = { fg = "#f5edca" }
+"menu selected" = { bg = "#dde5c2", fg = "#3c3836" }
+
+"help" = { bg = "#f9f5d7" }
+"help title" = { fg = "#79740e", bold = true, underline = true }
+"help border" = { fg = "#f5edca" }
+
+"preview" = { fg = "#3c3836" }
+"preview border" = { fg = "#f5edca" }
+
+"confirmation" = { bg = "#f9f5d7" }
+"confirmation text" = { fg = "#076678", bold = true }
+"confirmation dimmed" = { fg = "#786b60" }
+"confirmation border" = { fg = "#9d0006", bold = true }
+"confirmation selected" = { bg = "#dde5c2", fg = "#3c3836" }
+
+"undo" = { bg = "#f9f5d7" }
+"undo confirmation dimmed" = { fg = "#786b60" }
+"undo confirmation selected" = { bg = "#dde5c2", fg = "#3c3836" }
+
+"success" = { fg = "#79740e", bold = true }
+"error" = { fg = "#9d0006", bold = true }
+"revisions rebase source_marker" = { bold = true }
+"revisions rebase target_marker" = { bold = true }
+"status shortcut" = { fg = "#8f3f71" }
+"status dimmed" = { fg = "#786b60" }
+
+"details" = { fg = "#3c3836" }
+"details selected" = { bold = true }
+"completion" = { fg = "#3c3836" }
+"completion selected" = { bold = true }
+"rebase" = { bold = true }
+
+"workspace" = { fg = "#076678" }
+"branch" = { fg = "#af3a03" }
+"commit" = { fg = "#79740e" }
+"file" = { fg = "#b57614" }
+"change" = { fg = "#9d0006" }
+"bookmark" = { fg = "#8f3f71" }

@@ -2,21 +2,10 @@ vim.pack.add({
 	{ src = "https://github.com/Bekaboo/dropbar.nvim" },
 })
 
--- plugin-UI / read-only buffers don't benefit from a symbol breadcrumb
-local no_bar_ft = {
-	["claudecode"] = true,
-	["oil"] = true,
-	["trouble"] = true,
-	["undotree"] = true,
-	["diff"] = true,
-	["grug-far"] = true,
-	["help"] = true,
-	["qf"] = true,
-	["checkhealth"] = true,
-	["lspinfo"] = true,
-	["gitsigns-blame"] = true,
-	["man"] = true,
-}
+local no_bar_ft = {}
+for _, ft in ipairs(vim.g.util_filetypes) do
+	no_bar_ft[ft] = true
+end
 
 require("dropbar").setup({
 	bar = {
@@ -37,43 +26,11 @@ require("dropbar").setup({
 	},
 })
 
--- Neovim quirk (neovim/neovim#26037): any %#Group# cell in a winbar that
--- doesn't define its own bg falls back to Normal's bg, not WinBar's. Since
--- dropbar renders almost entirely via its own DropBar(Icon)Kind* groups
--- (confirmed by the maintainer in Bekaboo/dropbar.nvim#35), styling WinBar
--- itself never actually shows - every one of those groups needs its own bg.
-local WINBAR_BG = "#E5DFC5"
-local BORDER = "#D8D3BA"
-
-local kinds = {
-	"Array", "BlockMappingPair", "Boolean", "BreakStatement", "Call", "CaseStatement",
-	"Class", "Constant", "Constructor", "ContinueStatement", "Declaration", "Default",
-	"Delete", "Dir", "DoStatement", "Element", "ElseStatement", "Enum", "EnumMember", "Event",
-	"Field", "File", "Folder", "ForStatement", "Function", "GotoStatement", "Identifier",
-	"IfStatement", "Interface", "Keyword", "List", "Macro",
-	"MarkdownH1", "MarkdownH2", "MarkdownH3", "MarkdownH4", "MarkdownH5", "MarkdownH6",
-	"Method", "Module", "Namespace", "Null", "Number", "Object", "Operator", "Package",
-	"Pair", "Property", "Reference", "Repeat", "ReturnStatement", "Rule", "RuleSet",
-	"Scope", "Section", "Specifier", "Statement", "String", "Struct", "SwitchStatement",
-	"Table", "Terminal", "Type", "TypeParameter", "Unit", "Value", "Variable",
-	"WhileStatement",
-}
-
+-- dropbar renders through its own DropBar* groups. They carry no bg of their
+-- own, so this is what gives the whole bar its colour.
 local function set_winbar_hl()
-	vim.api.nvim_set_hl(0, "WinBar", { bg = WINBAR_BG, underline = true, sp = BORDER })
-	vim.api.nvim_set_hl(0, "WinBarNC", { bg = WINBAR_BG, underline = true, sp = BORDER })
-
-	for _, suffix in ipairs({ "", "NC" }) do
-		vim.api.nvim_set_hl(0, "DropBarIconUISeparator" .. suffix, {
-			fg = BORDER,
-			bg = WINBAR_BG,
-		})
-		for _, kind in ipairs(kinds) do
-			local icon_group = "DropBarIconKind" .. kind .. suffix
-			local icon_hl = vim.api.nvim_get_hl(0, { name = icon_group, link = false })
-			vim.api.nvim_set_hl(0, icon_group, vim.tbl_extend("force", icon_hl, { bg = WINBAR_BG }))
-			vim.api.nvim_set_hl(0, "DropBarKind" .. kind .. suffix, { bg = WINBAR_BG })
-		end
+	for _, g in ipairs({ "WinBar", "WinBarNC" }) do
+		vim.api.nvim_set_hl(0, g, { bg = "#f2f2f2", underline = true, sp = "#e9e9e9" })
 	end
 end
 

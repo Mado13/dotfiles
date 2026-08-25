@@ -62,3 +62,7 @@ if status is-interactive
 end
 
 source {{ .chezmoi.homeDir }}/.safe-chain/scripts/init-fish.fish # Safe-chain Fish initialization script
+
+
+# Added by Antigravity CLI installer
+set -gx PATH "{{ .chezmoi.homeDir }}/.local/bin" $PATH

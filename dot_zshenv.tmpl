@@ -2,5 +2,6 @@
 export PATH="{{ .chezmoi.homeDir }}/.local/bin:$PATH"
 
 # bun completions
-[ -s "{{ .chezmoi.homeDir }}/.bun/_bun" ] && source "{{ .chezmoi.homeDir }}/.bun/_bun"
+# interactive only: _bun runs compinit, whose stderr leaks into any `zsh -c` capture
+[[ -o interactive ]] && [ -s "{{ .chezmoi.homeDir }}/.bun/_bun" ] && source "{{ .chezmoi.homeDir }}/.bun/_bun"
 . "$HOME/.cargo/env"

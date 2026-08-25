@@ -6,8 +6,11 @@ vim.diagnostic.config({
 	update_in_insert = false,
 	severity_sort = true,
 	underline = { severity = { min = vim.diagnostic.severity.WARN } },
-	-- below the code, not at eol: stays on screen under wrap where virtual_text can't
-	virtual_lines = true,
+	-- virtual_lines only under the cursor: it needs a whole line per diagnostic, so
+	-- every one on screen shifts the code below it and the relative numbers with it.
+	-- The line I'm reading is the one that needs the room; the rest get an eol note.
+	virtual_lines = { current_line = true },
+	virtual_text = { current_line = false },
 	float = { source = "if_many" },
 	signs = {
 		text = {
@@ -32,7 +35,6 @@ vim.lsp.config("lua_ls", {
 				checkThirdParty = false,
 				library = { vim.env.VIMRUNTIME },
 			},
-			hint = { enable = true },
 			telemetry = { enable = false },
 		},
 	},
@@ -45,16 +47,12 @@ vim.lsp.config("ruby_lsp", {
 	},
 })
 
-vim.lsp.config("elixirls", {
-	cmd = { "language_server.sh" }, -- resolved via PATH, already installed
-	filetypes = { "elixir", "eelixir", "heex" },
-	settings = {
-		elixirLS = {
-			dialyzerEnabled = true,
-			fetchDeps = false,
-			enableTestLenses = true,
-		},
-	},
+-- the server only knows css/scss/less language ids, so .pcss has to pass as css
+vim.lsp.config("cssls", {
+	filetypes = { "css", "scss", "less", "postcss" },
+	get_language_id = function(_, ft)
+		return ft == "postcss" and "css" or ft
+	end,
 })
 
 -- The two halves of the svelte <-> typescript bridge:
@@ -74,6 +72,11 @@ vim.lsp.config("elixirls", {
 vim.lsp.config("vtsls", {
 	settings = {
 		vtsls = {
+			-- tsserver otherwise hands blink every global in scope on each keystroke,
+			-- thousands in a big project, and blink filters them again anyway
+			experimental = {
+				completion = { enableServerSideFuzzyMatch = true, entriesLimit = 200 },
+			},
 			tsserver = {
 				globalPlugins = {
 					{
@@ -81,6 +84,11 @@ vim.lsp.config("vtsls", {
 						location = "/opt/homebrew/lib",
 						-- projects pin their own typescript, so the probe path has
 						-- to be passed for those too, not just the bundled tsdk
+						enableForWorkspaceTypeScriptVersions = true,
+					},
+					{
+						name = "@astrojs/ts-plugin",
+						location = "/opt/homebrew/lib",
 						enableForWorkspaceTypeScriptVersions = true,
 					},
 				},
@@ -114,6 +122,11 @@ vim.lsp.config("svelte", {
 	end,
 })
 
+-- astro-ls resolves typescript.tsdk from the project's own node_modules, so an
+-- astro repo needs typescript as a devDep or the server won't start. Pin it to
+-- 6.x: TS 7 dropped tsserverlibrary.js, which is the file that lookup wants.
+-- Install with: npm i -g @astrojs/language-server @astrojs/ts-plugin
+
 -- nvim only keeps .git, node_modules and .hg out of LSP file watchers, so one
 -- vite build hands every server a few hundred changes and svelte answers each
 -- batch with a workspace-wide diagnostic refresh. Generated output only, and
@@ -136,17 +149,62 @@ if watchfiles_ok and watchfiles._poll_exclude_pattern then
 	end
 end
 
-vim.lsp.enable({ "lua_ls", "ruby_lsp", "elixirls", "vtsls", "svelte" })
+-- scss/css, json and the locale ymls had no server at all. Defaults are fine
+-- for all three, they just need enabling. vscode-langservers-extracted also
+-- ships an eslint server: nvim-lint covers eslint already, but switch to that
+-- one if you ever want its "fix this rule" code actions.
+vim.lsp.enable({
+	"lua_ls",
+	"ruby_lsp",
+	"expert",
+	"vtsls",
+	"svelte",
+	"astro",
+	"cssls",
+	"jsonls",
+	"yamlls",
+})
+
+-- nvim keeps a server running after its last buffer closes, so a long session
+-- piles up one per language I've touched. vim.lsp.enable starts it again on the
+-- next matching FileType.
+local idle_stop_ms = 5 * 60 * 1000
+vim.api.nvim_create_autocmd("LspDetach", {
+	callback = function(args)
+		local id = args.data.client_id
+		vim.defer_fn(function()
+			local client = vim.lsp.get_client_by_id(id)
+			if client and not client:is_stopped() and vim.tbl_isempty(client.attached_buffers) then
+				client:stop()
+			end
+		end, idle_stop_ms)
+	end,
+})
 
 -- Off by default in 0.12. Global enable is safe, it only attaches to clients
 -- advertising textDocument/linkedEditingRange. Overlaps nvim-ts-autotag's tag
 -- rename, but not its auto-close, so both stay.
 vim.lsp.linked_editing_range.enable()
 
+-- nvim binds gra/gri/grn/grr/grt/grx globally at startup, so a bare `gr` has to
+-- wait timeoutlen to see whether a third key is coming. `gr` is references below
+-- and gets pressed constantly, so drop the defaults and rebind the three that
+-- have no equivalent here. gra/grn/grr duplicate <leader>ca, <leader>rn and gr.
+for _, lhs in ipairs({ "gra", "gri", "grn", "grr", "grt", "grx" }) do
+	pcall(vim.keymap.del, "n", lhs)
+end
+
 -- Keymaps only activate in buffers where a server actually attached
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(args)
 		local opts = { buffer = args.buf }
+		vim.keymap.set("n", "gI", function()
+			require("fzf-lua").lsp_implementations()
+		end, opts)
+		vim.keymap.set("n", "gy", function()
+			require("fzf-lua").lsp_typedefs()
+		end, opts)
+		vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
 		vim.keymap.set("n", "gd", function()
 			require("fzf-lua").lsp_definitions()
 		end, opts)

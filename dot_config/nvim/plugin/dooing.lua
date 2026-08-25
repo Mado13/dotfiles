@@ -6,16 +6,20 @@ vim.pack.add({
 -- and each one gets a scratchpad for follow-up notes.
 require("dooing").setup({
 	window = {
-		dimensions = { width = 80, height = 30 },
+		-- evaluated on every open, so the float tracks the terminal instead of
+		-- claiming 30 of 36 rows on the laptop screen
+		dimensions = function()
+			return {
+				width = math.min(80, math.floor(vim.o.columns * 0.6)),
+				height = math.floor(vim.o.lines * 0.6),
+			}
+		end,
 		border = "rounded",
 	},
 
-	ui = {
-		sections = true, -- groups by status, the closest thing to board columns
-		note_preview = true,
-		priority_bar = true,
-		progress = true,
-	},
+	-- style is the master switch. Without it the renderer stays classic and every
+	-- toggle under it, sections included, is ignored. The rest default to true.
+	ui = { style = "modern" },
 
 	-- one ticket file per repo, created without asking
 	per_project = {
@@ -34,6 +38,8 @@ require("dooing").setup({
 		indent = 2,
 		retain_structure_on_complete = true,
 		move_completed_to_end = true,
+		-- a sub-task of a P1 is a P1, so skip the picker
+		inherit_priority = true,
 	},
 
 	-- on_startup fires a popup every time nvim opens, which gets old fast

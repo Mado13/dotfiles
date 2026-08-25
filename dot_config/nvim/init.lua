@@ -21,4 +21,4 @@ vim.g.loaded_tarPlugin = 1
 vim.g.loaded_2html_plugin = 1
 vim.g.loaded_netrwPlugin = 1
 
--- colorscheme lives in plugin/colorscheme.lua (everforest)
+-- colorscheme lives in plugin/colorscheme.lua (modus)

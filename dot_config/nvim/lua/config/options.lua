@@ -1,3 +1,19 @@
+-- Read-only plugin UI. Shared with plugin/dropbar.lua so the list stays in
+-- one place instead of drifting between them.
+vim.g.util_filetypes = {
+	"checkhealth",
+	"claudecode",
+	"diff",
+	"gitsigns-blame",
+	"grug-far",
+	"help",
+	"lspinfo",
+	"man",
+	"oil",
+	"qf",
+	"trouble",
+}
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = "a"
@@ -16,6 +32,13 @@ vim.opt.scrolloff = 8
 vim.opt.inccommand = "split"
 vim.opt.confirm = true
 vim.opt.breakindent = true
+vim.opt.cursorline = true
+-- wrap is on and breakindent only fixes the indent, so without this a wrapped
+-- line splits mid-identifier
+vim.opt.linebreak = true
+vim.opt.showbreak = "↳ "
+vim.opt.list = true
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.swapfile = false
 vim.opt.timeoutlen = 500
 vim.opt.synmaxcol = 300

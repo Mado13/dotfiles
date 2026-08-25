@@ -1,3 +1,8 @@
 **/.claude/settings.local.json
+**/.claude/hooks/
+**/.claude/path-rules.json
+**/.claude/skills/
+**/.claude/verify*.sh
 .zed/
 dooing.json
+.playwright-cli/

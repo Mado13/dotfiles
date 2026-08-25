@@ -7,8 +7,11 @@ vim.pack.add({
 -- nvim core has no .slim rule, so filetype stays empty and the FileType
 -- autocmd below never starts treesitter for slim files
 vim.filetype.add({
-  extension = { slim = "slim" },
+  extension = { slim = "slim", pcss = "postcss" },
 })
+
+-- no postcss grammar exists, and .pcss here is plain css plus nesting
+vim.treesitter.language.register("css", "postcss")
 
 require("nvim-treesitter").setup({
   install_dir = vim.fn.stdpath("data") .. "/site",
@@ -19,7 +22,7 @@ require("nvim-treesitter").install({
   "lua", "vim", "vimdoc", "query",
   "ruby", "slim",
   "elixir", "heex", "eex",
-  "javascript", "typescript", "tsx", "svelte",
+  "javascript", "typescript", "tsx", "svelte", "astro",
   "html", "css", "json", "yaml", "toml",
   "bash", "markdown", "markdown_inline",
   "git_config", "gitcommit", "gitignore", "diff", "jjdescription",

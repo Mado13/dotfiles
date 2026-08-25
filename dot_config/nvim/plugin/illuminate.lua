@@ -14,7 +14,6 @@ require("illuminate").configure({
 		"oil",
 		"trouble",
 		"grug-far",
-		"undotree",
 		"fzf",
 		"help",
 		"checkhealth",

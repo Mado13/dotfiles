@@ -10,7 +10,9 @@ vim.keymap.set("n", "<leader>/", "<cmd>FzfLua live_grep<cr>", { desc = "Grep pro
 vim.keymap.set("n", "<leader>fm", "<cmd>FzfLua marks<cr>", { desc = "List marks (ctrl-x deletes)" })
 vim.keymap.set("n", "<leader>fk", "<cmd>FzfLua keymaps<cr>", { desc = "Search keymaps" })
 vim.keymap.set("n", "<leader>fr", function()
-	require("fzf-lua").oldfiles({ cwd_only = true })
+	-- v:oldfiles is frozen at startup, so without the session buffers this list has
+	-- nothing you opened today in it
+	require("fzf-lua").oldfiles({ cwd_only = true, include_current_session = true })
 end, { desc = "Recent files (project)" })
 
 -- Alternate with the last real file buffer (skip oil/terminal/claude/etc. via

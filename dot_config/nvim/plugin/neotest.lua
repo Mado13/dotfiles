@@ -30,3 +30,14 @@ vim.keymap.set("n", "<leader>tp", function() nt.output_panel.toggle() end, { des
 vim.keymap.set("n", "<leader>tS", function() nt.summary.toggle() end, { desc = "Test summary tree" })
 vim.keymap.set("n", "[T", function() nt.jump.prev({ status = "failed" }) end, { desc = "Prev failed test" })
 vim.keymap.set("n", "]T", function() nt.jump.next({ status = "failed" }) end, { desc = "Next failed test" })
+
+-- modus sets NeotestTest to bg_dim, a background value used as a foreground, so
+-- it renders at 1.12:1 (theme.lua:472). NeotestWatching it doesn't set at all,
+-- leaving neotest's own #FFEC63 at 1.20:1. Both re-set on ColorScheme.
+local function neotest_hl()
+	vim.api.nvim_set_hl(0, "NeotestTest", { link = "Normal" })
+	vim.api.nvim_set_hl(0, "NeotestWatching", { fg = "#6f5500" })
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", { callback = neotest_hl })
+neotest_hl()

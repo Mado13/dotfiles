@@ -1,5 +1,5 @@
 vim.pack.add({
-	{ src = "https://github.com/mistweaverco/kulala.nvim" },
+	{ src = "https://github.com/dont-be-evil-company/kulala.nvim" },
 })
 
 vim.filetype.add({
@@ -37,6 +37,22 @@ require("kulala").setup({
 
 	lsp = {
 		-- default also attaches to every lua buffer for *.http.lua scripting
-		filetypes = { "http", "rest", "javascript", "typescript" },
+		filetypes = { "http", "rest", "javascript" },
 	},
 })
+
+-- the openapi panel hardcodes swagger's palette, which is built for a white
+-- card on a dark page. Five of the seven verbs land under 4.5:1 here, PATCH at
+-- 1.60:1. default = true, so defining them first wins.
+local function kulala_method_hl()
+	local verbs = {
+		Get = "#0031a9", Post = "#006800", Put = "#6f5500", Delete = "#a60000",
+		Patch = "#005e8b", Head = "#721045", Options = "#005077",
+	}
+	for verb, fg in pairs(verbs) do
+		vim.api.nvim_set_hl(0, "KulalaOpenAPIMethod" .. verb, { fg = fg, bold = true })
+	end
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", { callback = kulala_method_hl })
+kulala_method_hl()

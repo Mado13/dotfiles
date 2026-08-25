@@ -5,7 +5,9 @@ vim.pack.add({
 require("gitsigns").setup({
 	signs = {
 		add = { text = "┃" },
-		change = { text = "┃" },
+		-- dashed, because add and change are only a hue apart and a one-cell
+		-- glyph carries hue badly. Shape does the work, colour confirms it.
+		change = { text = "┇" },
 		delete = { text = "_" },
 		topdelete = { text = "‾" },
 		changedelete = { text = "~" },

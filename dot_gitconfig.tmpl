@@ -61,3 +61,24 @@
 	helper = /usr/local/share/gcm-core/git-credential-manager
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+
+[delta]
+	syntax-theme = GitHub
+	line-numbers = true
+	navigate = true
+	hunk-header-style = file line-number syntax
+	file-style = bold
+	file-decoration-style = "#595959 ul"
+	hunk-header-decoration-style = "#595959 ul"
+	hunk-header-line-number-style = "#0031a9"
+	# modus bg_removed / bg_added, with the faint variants for whole-line and the
+	# solid ones for the changed words. All stock modus, nothing derived.
+	minus-style = "syntax #ffe9e9"
+	minus-emph-style = "syntax #ffd8d5"
+	plus-style = "syntax #d8f8e1"
+	plus-emph-style = "syntax #c1f2d1"
+	line-numbers-minus-style = "#a60000"
+	line-numbers-plus-style = "#006800"
+	line-numbers-zero-style = "#9f9f9f"
+	whitespace-error-style = "#a60000 reverse"
+	max-line-length = 0
